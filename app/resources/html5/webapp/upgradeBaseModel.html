@@ -1,0 +1,52 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta http-equiv="Content-Type" content="text/html;charset=UTF-8" />
+    <title>Upgrade Base Model</title>
+
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script>
+      function onLoad() {
+      }
+      
+      function sendRequest(evt) {
+              axios({ url: '/catalog/Sales',
+                      method: 'get',
+                      headers: {'X-CSRF-TOKEN': 'Fetch'}
+                    })
+                .then(res => {
+                        return res.headers['x-csrf-token']
+                })
+                .then(token => {
+                        return axios({
+                                url: '/catalog/upgradeBaseModel',
+                                method: 'post',
+                                headers: {
+                                        "Content-Type": "application/json",
+                                        "x-csrf-token": token 
+                                      },
+                                data: {
+                                        dummy: 'aa'
+                                      }
+                              })
+                })
+                .then(response => {
+                  alert('Finished')
+                })
+                .catch( error => {
+                  alert(error.message);
+                })
+      }
+    </script>
+</head>
+
+<body onload='onLoad()'>
+    <h2>Click the button below to upgrade the model of this tenant to the model of the provider application.</h2>
+    <form>
+        <button type="button" onClick='return sendRequest()'>Senden</button>
+    </form>
+</body>
+
+</html>

@@ -1,0 +1,58 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta http-equiv="Content-Type" content="text/html;charset=UTF-8" />
+    <title>Deactivate several Extensions</title>
+
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script>
+      function onLoad() {
+        this.document.getElementById("fnames").value = `db/Sales.cds`;
+      }
+      
+      function sendRequest(evt) {
+              var aFiles = this.document.getElementById("fnames").value.split("\n");
+              axios({ url: '/catalog/Sales',
+                      method: 'get',
+                      headers: {'X-CSRF-TOKEN': 'Fetch'}
+                    })
+                .then(res => {
+                        return res.headers['x-csrf-token']
+                })
+                .then(token => {
+                        return axios({
+                                url: '/catalog/deactivateExtension',
+                                method: 'post',
+                                headers: {
+                                        "Content-Type": "application/json",
+                                        "x-csrf-token": token 
+                                      },
+                                data: {
+                                        files: aFiles
+                                      }
+                              })
+                })
+                .then(response => {
+                  alert('Finished')
+                })
+                .catch( error => {
+                  alert(error.message);
+                })
+      }
+    </script>
+</head>
+
+<body onload='onLoad()'>
+    <h2>Enter the extension filenames you want to deactivate</h2>
+    <form>
+        Files:
+        <br/>
+        <textarea id="fnames" cols="50" rows="10" name="fnames"></textarea>
+        <br/>
+        <button type="button" onClick='return sendRequest()'>Senden</button>
+    </form>
+</body>
+
+</html>
