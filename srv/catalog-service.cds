@@ -12,6 +12,7 @@ service CatalogService @(path : '/catalog')
     action upgradeBaseModel() returns String;
     action resetTenant() returns String;
     action dummy() returns String;
+    function restartApp(appName: String(60)) returns String;
 
     entity Sales
       @(restrict: [{ grant: ['READ'],

@@ -8,23 +8,23 @@
     "node": "14.x"
   },
   "dependencies": {
-    "@sap/cds": "^5",
-    "@sap/audit-logging": "^5",
-    "hdb": "^0.19",
     "@sap-cloud-sdk/core": "^1.53",
+    "@sap/audit-logging": "^5",
+    "@sap/cds": "^5",
+    "@sap/cds-mtx": "^2",
     "@sap/xsenv": "^3",
     "@sap/xssec": "^3",
-    "passport": "^0.4.1",
-    "@sap/cds-mtx": "^2",
-    "cfenv": "^1",
-
     "cf-nodejs-logging-support": "^6",
+    "cfenv": "^1",
     "debug": "^4.3",
-    "express": "^4"
+    "express": "^4",
+    "hdb": "^0.19",
+    "passport": "^0.4.1"
   },
   "devDependencies": {
+    "@sap/ux-specification": "^1.96.4",
+    "prettier": "2.6.2",
     "sqlite3": "^5.0.2"
-    ,"@sap/ux-specification": "^1.96.4"
   },
   "sapux": [
     "app/resources/fiori"
@@ -88,8 +88,7 @@
               "srv"
             ]
           }
-        }
-        ,
+        },
         {
           "for": "mtx",
           "src": ".",
@@ -134,8 +133,7 @@
             }
           }
         }
-      }
-      ,
+      },
       "db": {
         "[production]": {
           "kind": "hana-cloud"
@@ -146,16 +144,13 @@
         "model": [
           "db",
           "srv"
-        ]
-        ,
+        ],
         "vcap": {
           "label": "service-manager"
         }
-      }
-      ,
+      },
       "multitenancy": true
-      }
-    ,
+    },
     "mtx": {
       "api": {
         "provisioning": true,
@@ -173,10 +168,14 @@
       ],
       "extension-allowlist": [
         {
-          "for": ["app1.db.Sales"]
+          "for": [
+            "app1.db.Sales"
+          ]
         },
         {
-          "for": ["CatalogService"],
+          "for": [
+            "CatalogService"
+          ],
           "kind": "service"
         }
       ]

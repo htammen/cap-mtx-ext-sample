@@ -9,7 +9,10 @@
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script>
       function onLoad() {
-        this.document.getElementById("fnames").value = `db/Sales.cds`;
+        this.document.getElementById("fnames").value = `srv/extensions.cds
+db/Sales.cds
+db/new.cds
+`;
       }
       
       function sendRequest(evt) {
@@ -49,7 +52,7 @@
     <form>
         Files:
         <br/>
-        <textarea id="fnames" cols="50" rows="10" name="fnames"></textarea>
+        <textarea id="fnames" cols="50" rows="12" name="fnames"></textarea>
         <br/>
         <button type="button" onClick='return sendRequest()'>Senden</button>
     </form>
