@@ -7,7 +7,7 @@ const cfcommand = require("./cfcommands");
 log.setLoggingLevel("info");
 log.registerCustomFields(["country", "amount"]);
 
-module.exports = cds.service.impl(async function () {
+module.exports = cds.service.impl( function () {
   const { Sales } = this.entities;
 
   this.after("READ", Sales, (each) => {
@@ -54,7 +54,7 @@ module.exports = cds.service.impl(async function () {
     }
   });
 
-  this.on("userInfo", async (req) => {
+  this.on("userInfo", (req) => {
     let results = {};
     results.user = req.user.id;
     if (req.user.hasOwnProperty("locale")) {
@@ -78,13 +78,17 @@ module.exports = cds.service.impl(async function () {
 
     const { aSnippets } = req.data;
 
-    let extensions = [];
-    for (let oSnippet of aSnippets) {
+    const extensions = [];
+    for (const oSnippet of aSnippets) {
       extensions.push([oSnippet.sFilename, oSnippet.sCode]);
     }
     try {
       const modelService = await cds.connect.to("ModelService");
       await modelService.activate(req.user.tenant, extensions);
+      // the following emit worked in Günther's app so that a restart war not necessary
+      // but it doesn't work here
+      // TODO: find another solutions
+      await cds.emit("served", cds.services);
     } catch (e) {
       log.error(`couldn't activate extension for ${tenant}`);
       edmx = "";
@@ -105,6 +109,10 @@ module.exports = cds.service.impl(async function () {
       // action deactivate (tenant: String(200), extension: JSON_ARRAY);
       const modelService = await cds.connect.to("ModelService");
       const apiResult = await modelService.deactivate(req.user.tenant, files);
+      // the following emit worked in Günther's app so that a restart war not necessary
+      // but it doesn't work here
+      // TODO: find another solutions
+      await cds.emit("served", cds.services);
     } catch (e) {
       log.error(JSON.stringify(e));
       return "error while deactivating extension. See logs for details";
