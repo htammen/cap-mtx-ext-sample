@@ -19,10 +19,12 @@
     "debug": "^4.3",
     "express": "^4",
     "hdb": "^0.19",
-    "passport": "^0.4.1"
+    "passport": "^0.4.1",
+    "ts-node": "^10.8.1"
   },
   "devDependencies": {
     "@sap/ux-specification": "^1.96.4",
+    "@tsconfig/node18": "^1.0.1",
     "prettier": "2.6.2",
     "sqlite3": "^5.0.2"
   },
@@ -31,8 +33,8 @@
   ],
   "scripts": {
     "debug": "run(){ CDS_ENV=production node --inspect ./node_modules/@sap/cds/bin/cds.js run; }; run",
-    "start": "cds run",
-    "start_with_server": "CDS_ENV=production cds run",
+    "start": "cds-ts run",
+    "start_with_server": "CDS_ENV=production cds-ts run",
     "start_local_ui": "echo 'Starting UI locally' && cd ./app && node custom.js",
     "build": "mbt build",
     "deploy": "cf deploy ./mta_archives/app1_0.0.1.mtar",
