@@ -16,6 +16,7 @@ function toJson() {
   });
 }
 
-module.exports = () => {
-  toJson();
-}
+// module.exports = () => {
+//   toJson();
+// }
+module.exports = toJson();

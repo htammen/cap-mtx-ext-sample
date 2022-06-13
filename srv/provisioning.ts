@@ -1,8 +1,11 @@
-const cds = require('@sap/cds');
-const debug = require('debug')('srv:provisioning');
-const cfenv = require('cfenv');
+import { Service } from "@sap/cds/apis/services";
+
+import * as cds from "@sap/cds";
+import * as cfenv from "cfenv";
+import * as xsenv from "@sap/xsenv";
+import log from "cf-nodejs-logging-support";
+
 const appEnv = cfenv.getAppEnv();
-const xsenv = require('@sap/xsenv');
 xsenv.loadEnv();
 const services = xsenv.getServices({
     registry: { tag: 'SaaS' }
@@ -10,7 +13,7 @@ const services = xsenv.getServices({
 
 const core = require('@sap-cloud-sdk/core');
 
-async function getCFInfo(appname) {
+async function getCFInfo(appname: string) {
     try {
         // get app GUID
         let res1 = await core.executeHttpRequest({ destinationName: 'app1-cfapi'}, {
@@ -20,20 +23,20 @@ async function getCFInfo(appname) {
         // get domain GUID
         let res2 = await core.executeHttpRequest({ destinationName: 'app1-cfapi'}, {
             method: 'GET',
-            url: '/v3/domains?names=' + /\.(.*)/gm.exec(appEnv.app.application_uris[0])[1]
+            url: '/v3/domains?names=' + /\.(.*)/gm.exec(appEnv.app.application_uris[0])![1]
         });
         let results = {
             'app_id': res1.data.resources[0].guid,
             'domain_id': res2.data.resources[0].guid
         };
         return results;
-    } catch (err) {
+    } catch (err: any) {
         console.log(err.stack);
         return err.message;
     }
 };
 
-async function createRoute(tenantHost, appname) {
+async function createRoute(tenantHost: string, appname: string) {
     getCFInfo(appname).then(
         async function (CFInfo) {
             try {
@@ -71,7 +74,7 @@ async function createRoute(tenantHost, appname) {
                 });
                 console.log('Route created for ' + tenantHost);
                 return res2.data;
-            } catch (err) {
+            } catch (err: any) {
                 console.log(err.stack);
                 return err.message;
             }
@@ -82,7 +85,7 @@ async function createRoute(tenantHost, appname) {
         });
 };
 
-async function deleteRoute(tenantHost, appname) {
+async function deleteRoute(tenantHost: string, appname: string) {
     getCFInfo(appname).then(
         async function (CFInfo) {
             try {
@@ -100,7 +103,7 @@ async function deleteRoute(tenantHost, appname) {
                         });
                         console.log('Route deleted for ' + tenantHost);
                         return res2.data;
-                    } catch (err) {
+                    } catch (err: any) {
                         console.log(err.stack);
                         return err.message;
                     }
@@ -109,7 +112,7 @@ async function deleteRoute(tenantHost, appname) {
                     console.log(errmsg);
                     return errmsg;
                 }
-            } catch (err) {
+            } catch (err: any) {
                 console.log(err.stack);
                 return err.message;
             }
@@ -120,11 +123,11 @@ async function deleteRoute(tenantHost, appname) {
         });
 };
 
-module.exports = (service) => {
+export = (service: Service) => {
 
     service.on('UPDATE', 'tenant', async (req, next) => {
         let tenantHost = req.data.subscribedSubdomain + '-' + appEnv.app.space_name.toLowerCase().replace(/_/g, '-') + '-' + services.registry.appName.toLowerCase().replace(/_/g, '-');
-        let tenantURL = 'https:\/\/' + tenantHost + /\.(.*)/gm.exec(appEnv.app.application_uris[0])[0];
+        let tenantURL = 'https:\/\/' + tenantHost + /\.(.*)/gm.exec(appEnv.app.application_uris[0])![0];
         console.log('Subscribe: ', req.data.subscribedSubdomain, req.data.subscribedTenantId, tenantHost);
         await next();
         createRoute(tenantHost, services.registry.appName).then(
@@ -133,7 +136,7 @@ module.exports = (service) => {
                 return tenantURL;
             },
             function (err) {
-                debug(err.stack);
+                log.debug(err.stack);
                 return '';
             });
         return tenantURL;
@@ -149,7 +152,7 @@ module.exports = (service) => {
                 return req.data.subscribedTenantId;
             },
             function (err) {
-                debug(err.stack);
+                log.debug(err.stack);
                 return '';
             });
         return req.data.subscribedTenantId;
@@ -157,9 +160,9 @@ module.exports = (service) => {
 
     service.on('upgradeTenant', async (req, next) => {
         await next();
+        // @ts-ignore('later')
         const { instanceData, deploymentOptions } = cds.context.req.body;
         console.log('UpgradeTenant: ', req.data.subscribedTenantId, req.data.subscribedSubdomain, instanceData, deploymentOptions);
     });
-
 
 }

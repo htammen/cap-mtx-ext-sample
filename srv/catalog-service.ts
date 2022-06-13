@@ -1,18 +1,14 @@
 import * as cds from "@sap/cds";
 import { Service } from "@sap/cds/apis/services";
+//@ts-ignore('Later')
 import log from "cf-nodejs-logging-support";
 import * as cfcommands from "./cfcommands";
 
-// const cds = require("@sap/cds");
-// const debug = require("debug")("srv:catalog-service");
-// const log = require("cf-nodejs-logging-support");
-// const cfcommands = require("./cfcommands");
-// require("./error_helper");
-// const cfcommand = require("./cfcommands");
-// log.setLoggingLevel("info");
-// log.registerCustomFields(["country", "amount"]);
+// @ts-ignore('later')
+// import * as error_helper from "./error_helper";
+require("./error_helper");
 
-export default (srv: Service) => {
+export = (srv: Service) => {
   const { Sales } = srv.entities;
 
   srv.after("READ", Sales, (each: any) => {
@@ -38,8 +34,8 @@ export default (srv: Service) => {
         .with({ amount: { "+=": 250 }, comments: "Boosted!" })
         .where({ ID: { "=": ID } });
       return {};
-    } catch (err) {
-      console.error(err);
+    } catch (err: any) {
+      console.error(err.toJSON());
       return {};
     }
   });
@@ -52,8 +48,8 @@ export default (srv: Service) => {
         req.data.amount,
       ]);
       return results;
-    } catch (err) {
-      console.error(err);
+    } catch (err: any) {
+      console.error(err.toJSON());
       return {};
     }
   });
@@ -205,3 +201,4 @@ export default (srv: Service) => {
   //   return results;
   // });
 };
+

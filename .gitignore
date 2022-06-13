@@ -17,3 +17,8 @@ _out
 .che/
 .gen/
 .DS_Store
+**/*.js.map
+/srv/catalog-service.js
+/srv/cfcommands.js
+/srv/modelservice.js
+/srv/provisioning.js

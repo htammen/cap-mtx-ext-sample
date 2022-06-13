@@ -1,13 +1,15 @@
+import { Service } from "@sap/cds/apis/services";
 
-module.exports = (service) => {
+export = (service: Service) => {
 
     service.on('reset', async (context, next) => {
         try {
           // we need this "hack" to transfer the user context (JWT) to the mtx backend.
           // Otherwise we get a not authorized error.
+          // @ts-ignore('later')
           context._.req = cds.context._.req
           await next();
-        } catch (error) {
+        } catch (error: any) {
           console.log(error.message);
             // HttpHelper.handleError(context, error);
         }
@@ -17,9 +19,10 @@ module.exports = (service) => {
         try {
           // we need this "hack" to transfer the user context (JWT) to the mtx backend.
           // Otherwise we get a not authorized error.
+          // @ts-ignore('later')
           context._.req = cds.context._.req
           await next();
-        } catch (error) {
+        } catch (error: any) {
           console.log(error.message);
             // HttpHelper.handleError(context, error);
         }
@@ -29,10 +32,11 @@ module.exports = (service) => {
         try {
           // we need this "hack" to transfer the user context (JWT) to the mtx backend.
           // Otherwise we get a not authorized error.
+          // @ts-ignore('later')
           context._.req = cds.context._.req
           context.data.extension_files = context.data.extension;
           await next();
-        } catch (error) {
+        } catch (error: any) {
           console.log(error.message);
             // HttpHelper.handleError(context, error);
         }
@@ -42,9 +46,10 @@ module.exports = (service) => {
         try {
           // we need this "hack" to transfer the user context (JWT) to the mtx backend.
           // Otherwise we get a not authorized error.
+          // @ts-ignore('later')
           context._.req = cds.context._.req
           await next();
-        } catch (error) {
+        } catch (error: any) {
           console.log(error.message);
             // HttpHelper.handleError(context, error);
         }

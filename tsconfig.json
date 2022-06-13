@@ -1,8 +1,12 @@
 {
   "extends": "@tsconfig/node18/tsconfig.json",
   "compilerOptions": {
-    "preserveConstEnums": true
+    "preserveConstEnums": true,
+    "sourceMap": true
   },
-  "include": ["src/**/*"],
+  "include": [
+    "srv/**/*", 
+    "srv/typings/**/*"
+  ],
   "exclude": ["node_modules", "**/*.spec.ts"]
 }

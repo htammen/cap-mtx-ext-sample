@@ -28,7 +28,7 @@
 	// Uncomment to connect as a non-root user. See https://aka.ms/vscode-remote/containers/non-root.
 	"remoteUser": "node",
 
-  "mounts": [
-    "source=/home/helmut/projects/nexontis/projects/app1,target=/home/node/projects,type=bind,consistency=cached"
-  ]
+  //"mounts": [
+  //  "source=/home/helmut/projects/nexontis/projects/app1,target=/home/node/projects,type=bind,consistency=cached"
+  //]
 }

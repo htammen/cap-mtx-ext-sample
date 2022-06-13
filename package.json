@@ -15,7 +15,7 @@
     "@sap/xsenv": "^3",
     "@sap/xssec": "^3",
     "cf-nodejs-logging-support": "^6",
-    "cfenv": "^1",
+    "cfenv": "^1.2.4",
     "debug": "^4.3",
     "express": "^4",
     "hdb": "^0.19",
@@ -25,6 +25,8 @@
   "devDependencies": {
     "@sap/ux-specification": "^1.96.4",
     "@tsconfig/node18": "^1.0.1",
+    "@types/cfenv": "^1.2.2",
+    "@types/sap__xsenv": "^2.0.3",
     "prettier": "2.6.2",
     "sqlite3": "^5.0.2"
   },
@@ -32,7 +34,7 @@
     "app/resources/fiori"
   ],
   "scripts": {
-    "debug": "run(){ CDS_ENV=production node --inspect ./node_modules/@sap/cds/bin/cds.js run; }; run",
+    "debug": "tsc && run(){ CDS_ENV=production node --inspect-brk ./node_modules/@sap/cds/bin/cds.js run; }; run",
     "start": "cds-ts run",
     "start_with_server": "CDS_ENV=production cds-ts run",
     "start_local_ui": "echo 'Starting UI locally' && cd ./app && node custom.js",
