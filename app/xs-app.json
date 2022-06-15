@@ -17,6 +17,13 @@
         }
         ,
         {
+            "source": "^/mtx/(.*)",
+            "target": "$1",
+            "authenticationType": "none",
+            "destination": "srv"
+        }
+        ,
+        {
             "source": "^/(.*)$",
             "authenticationType": "xsuaa",
             "scope": "$XSAPPNAME.Viewer",

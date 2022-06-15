@@ -42,6 +42,7 @@ extend service CatalogService with {
       }
       
       function sendRequest(evt) {
+              this.document.getElementById("result").innerHTML = "Be a little bit patient. The data has been sent to the server.\nAs soon as the server has finished you will see the results here";
               var sFname = this.document.getElementById("sFname1").value;
               var sCode = this.document.getElementById("sCode1").value;
               let aSnippets = [];
@@ -76,11 +77,10 @@ extend service CatalogService with {
                               })
                 })
                 .then(response => {
-                  console.log("Helmut");
-                  alert('Activation finished')
+                  this.document.getElementById("result").innerHTML = JSON.stringify(response.data, null, 2);
                 })
                 .catch( error => {
-                  alert(error.message);
+                  this.document.getElementById("result").innerHTML = JSON.stringify(error.response, null, 2);
                 })
       }
     </script>
@@ -110,6 +110,7 @@ extend service CatalogService with {
         <br/>
         <button type="button" onClick='return sendRequest()'>Senden</button>
     </form>
+    <div><pre id="result"></pre></div>
 </body>
 
 </html>

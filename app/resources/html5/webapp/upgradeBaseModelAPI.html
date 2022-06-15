@@ -4,20 +4,15 @@
 <head>
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta http-equiv="Content-Type" content="text/html;charset=UTF-8" />
-    <title>Deactivate several Extensions</title>
+    <title>Upgrade Base Model for tenant via API</title>
 
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script>
       function onLoad() {
-        this.document.getElementById("fnames").value = `srv/extensions.cds
-db/Sales.cds
-db/new.cds
-`;
       }
       
       function sendRequest(evt) {
               this.document.getElementById("result").innerHTML = "Be a little bit patient. The data has been sent to the server.\nAs soon as the server has finished you will see the results here";
-              var aFiles = this.document.getElementById("fnames").value.split("\n");
               axios({ url: '/catalog/Sales',
                       method: 'get',
                       headers: {'X-CSRF-TOKEN': 'Fetch'}
@@ -27,14 +22,14 @@ db/new.cds
                 })
                 .then(token => {
                         return axios({
-                                url: '/catalog/deactivateExtension',
+                                url: '/catalog/upgradeBaseModelAPI',
                                 method: 'post',
                                 headers: {
                                         "Content-Type": "application/json",
                                         "x-csrf-token": token 
                                       },
                                 data: {
-                                        files: aFiles
+                                        dummy: 'aa'
                                       }
                               })
                 })
@@ -42,19 +37,15 @@ db/new.cds
                   this.document.getElementById("result").innerHTML = response.data.value;
                 })
                 .catch( error => {
-                  this.document.getElementById("result").innerHTML = JSON.stringify(error.response, null, 2);
+                  alert(error.message);
                 })
       }
     </script>
 </head>
 
 <body onload='onLoad()'>
-    <h2>Enter the extension filenames you want to deactivate</h2>
+    <h2>Click the button below to upgrade the base model of the current tenant.</h2>
     <form>
-        Files:
-        <br/>
-        <textarea id="fnames" cols="50" rows="12" name="fnames"></textarea>
-        <br/>
         <button type="button" onClick='return sendRequest()'>Senden</button>
     </form>
     <div><pre id="result"></pre></div>

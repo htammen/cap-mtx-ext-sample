@@ -10,6 +10,7 @@ service CatalogService @(path : '/catalog')
     action activateExtension(aSnippets: many codeSnippetType) returns activateExtType;
     action deactivateExtension(files: many String(60)) returns String;
     action upgradeBaseModel() returns String;
+    action upgradeBaseModelAPI() returns String;
     action resetTenant() returns String;
     action dummy() returns String;
     function restartApp(appName: String(60)) returns String;
@@ -48,7 +49,7 @@ service CatalogService @(path : '/catalog')
 
 
     type userScopes { identified: Boolean; authenticated: Boolean; Viewer: Boolean; Admin: Boolean; ExtendCDS: Boolean; ExtendCDSdelete: Boolean;};
-    type userType { user: String; locale: String; tenant: String; scopes: userScopes; };
+    type userType { user: String; locale: String; tenant: String; scopes: userScopes; authorization: String};
     function userInfo() returns userType;
 
 };

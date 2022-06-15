@@ -68,6 +68,19 @@ These roles are exposed via the role collections
 
 Hence assign these role collections to your user or any user who should work with the application.
 
+##### Debug on BTP
+
+- `cf enable-ssh app1-srv` (only needed once)
+- `cf ssh app1-srv`
+- `ps aux`
+- find pid for **node /home/vcap/app/node_modules/.bin/cds run**
+- `kill -usr1 <pid>` (starts nodejs in debugging mode)
+- `exit` (exit ssh)
+- `cf ssh -N -L 9229:127.0.0.1:9229 app1-srv`
+- open chrome browser
+- `chrome://inspect`
+- Click **Open dedicated DevTools for Node**
+
 #### Running on local PC (debugging)
 
 To be able to run the apps (ui and srv) on your local PC you first have to 
