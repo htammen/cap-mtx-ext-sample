@@ -20,8 +20,7 @@
     "debug": "^4.3",
     "express": "^4",
     "hdb": "^0.19",
-    "passport": "^0.4.1",
-    "ts-node": "^10.8.1"
+    "passport": "^0.4.1"
   },
   "devDependencies": {
     "@sap/ux-specification": "^1.96.4",

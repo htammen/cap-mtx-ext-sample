@@ -10,8 +10,9 @@ service CatalogService @(path : '/catalog')
     action activateExtension(aSnippets: many codeSnippetType) returns activateExtType;
     action deactivateExtension(files: many String(60)) returns String;
     action upgradeBaseModel() returns String;
-    action upgradeBaseModelAPI() returns String;
+    action upgradeBaseModelAPI(tenantid: String) returns String;
     action resetTenant() returns String;
+    function clearMetadataCache() returns String;
     action dummy() returns String;
     function restartApp(appName: String(60)) returns String;
 

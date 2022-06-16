@@ -99,7 +99,7 @@ export = (srv: Service) => {
       req._.odataReq._service._getMetadataCache()._cachedMetadata.clear()
     } catch (err: any) {
       log.error(`couldn't activate extension for ${req.user.tenant}.`, err);
-      throw new Error( `error while activating extensions.\n${JSON.stringify(err.toJSON(), null, 2)}`);
+      throw new Error(`error while activating extensions.\n${JSON.stringify(err.toJSON(), null, 2)}`);
     }
 
     results.tenant = req.user.tenant;
@@ -126,7 +126,7 @@ export = (srv: Service) => {
       req._.odataReq._service._getMetadataCache()._cachedMetadata.clear()
     } catch (err: any) {
       log.error(`error deactivating extensions`, err);
-      throw new Error( `error while deactivating extension.\n${JSON.stringify(err.toJSON(), null, 2)}`);
+      throw new Error(`error while deactivating extension.\n${JSON.stringify(err.toJSON(), null, 2)}`);
     }
     log.info("Finished deactivateExtension action");
     return "deactivateExtension executed successfully";
@@ -164,11 +164,18 @@ export = (srv: Service) => {
 
   srv.on("upgradeBaseModelAPI", async (req: Request) => {
     log.info("Calling upgradeBaseModelAPI action");
-    const tenant = req.user.tenant || '';
+    const { tenantid } = req.data;
+    const tenant = tenantid || req.user.tenant || '';
     //@ts-ignore('later')
     const jobID = await mtxapis.upgradeBaseModel(req._.headers.authorization, req.req.headers.origin, [tenant]);
     //@ts-ignore('later')
     const sJobResult = await mtxapis.waitForJob(jobID, req.req.headers.origin, req._.headers.authorization);
+    // the following emit worked in Günther's app so that a restart war not necessary
+    // but it doesn't work here
+    // TODO: find another solutions
+    // @ts-ignore('later')
+    // await global.cds.emit("served");
+    req._.odataReq._service._getMetadataCache()._cachedMetadata.clear()
     log.info(`Finshed upgradeBaseModelAPI action with status ${sJobResult.status}`);
     return JSON.stringify(sJobResult, null, 2);
     // return `upgradeBaseModelAPI executed successfully with status ${sJobResult.status}`;
@@ -178,6 +185,12 @@ export = (srv: Service) => {
     log.info("Calling restartApp action");
     await cfcommands.restartApp("app1-srv");
     log.info("Finished restartApp action");
+  });
+
+  srv.on("clearMetadataCache", (req: Request) => {
+    //@ts-ignore('later')
+    req._.odataReq._service._getMetadataCache()._cachedMetadata.clear()
+    return `OData metadata cache has been cleared`;
   });
 
   srv.on("dummy", (req: Request) => {

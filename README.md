@@ -5,6 +5,11 @@ This project demonstrates the possibilities of CAP Extensibility in a multitenan
 Each tenant can extend the db and service layers of a SaaS application. All or some extensions can also be deleted later.  
 The extensions are not hard coded but can be added at runtime of the app.
 
+**This project uses typescript and ts-node. I have not added them to the package.json dependencies.
+So they need to be installed as global packages.  
+`npm i -g typescript`  
+`npm i -g ts-node`**
+
 ## Project structure
 
 This project is a regular CAP MTA project. As such it consists of the following folders / modules
@@ -54,7 +59,7 @@ To run the app on BTP you just have to create a subaccount and create a subscrip
 The tenant route for your subaccount tenant should have been created automatically during the subscription process. If it is not available please
 create it in your provider subaccount manually.
 
-**Assign role collections to users**
+##### Assign role collections to users
 
 The usage of the app is restricted to users with the roles **Viewer**, resp. **Admin** for the normal usage.
 To be able to extend the service and db layers you additionally need the roles **ExtendCDS** and **ExtendCDSDelete**.
@@ -153,6 +158,63 @@ The HTML5 app is more interesting. The menu items **Catalog** ... **User Info** 
 - **Restart Application**. Restarts the application on the server. This is currently necessary after extensions
 have been activated (created) or deactivated. After the dialog "Finished" is displayed wait another few seconds berfore
 working with the application. The restart has not finished but just the triggering of the restart.
+
+## Business logic
+
+The business logic is implemented in srv layer. It uses the cds-mtx module. This module provides extend functionality which allows 
+tenant specific extensions of the CAP application. 
+
+To enable an app to use extend functionality it is necessary to add some configuration data to the app. This is done in the cds.mtx 
+section of the package.json file or any of the other CAP configuration locations.
+
+The configuration allows to enable and restrict extensions for specified artefacts (properties, entities, services). Without any configuration
+the app can't be extended.
+
+```
+    "mtx": {
+      "api": {
+        "provisioning": true,
+        "metadata": true,
+        "model": true
+      },
+      "element-prefix": [
+        "Z_",
+        "ZZ_"
+      ],
+      "namespace-blocklist": [
+        "com.sap.",
+        "sap.",
+        "app1."
+      ],
+      "extension-allowlist": [
+        {
+          "for": [
+            "app1.db.Sales"
+          ]
+        },
+        {
+          "for": [
+            "CatalogService"
+          ],
+          "kind": "service"
+        }
+      ]
+    }
+```
+
+**element-prefix**
+
+The element-prefix section defines prefixes the extensions must start with to be recognized as extensions. Only those artifacts (properties, entities, services) 
+starting with this prefix(es) are valid extensions and are accepted by the mtx module.
+
+**namespace-blocklist**
+
+This section defines namespaces that are not allowed to extend.
+
+**extension-allowlist**
+
+This section defines artefacts (entities, services) that are allowed to be extended. If a tenant tries to extend another than these artefacts the
+extension will be rejected.
 
 ## Troubleshooting / Hints
 

@@ -12,6 +12,7 @@
       }
       
       function sendRequest(evt) {
+              const sTenant = this.document.getElementById("sTenant").value;
               this.document.getElementById("result").innerHTML = "Be a little bit patient. The data has been sent to the server.\nAs soon as the server has finished you will see the results here";
               axios({ url: '/catalog/Sales',
                       method: 'get',
@@ -29,7 +30,7 @@
                                         "x-csrf-token": token 
                                       },
                                 data: {
-                                        dummy: 'aa'
+                                        tenantid: sTenant
                                       }
                               })
                 })
@@ -45,7 +46,17 @@
 
 <body onload='onLoad()'>
     <h2>Click the button below to upgrade the base model of the current tenant.</h2>
+    <p>This application updates the tenant's HDI container with changes deployed to the provider application / HDI container.</br>
+    This is not done automatically after deployment of the provider app.</p>
     <form>
+        Tenant-ID:<br>
+        <input id="sTenant" type="text" name="tenant"></input>
+        <p>Enter a tenant id or leave the field blank to use the current tenant.<br/>
+        You can get the tenant id from the overview page of your tenant or by copying the tenant value from the userInfo app in the tenant context.
+        </p>
+        <p>If you choose another another tenant than the one you are currently logged into you have to clear the OData metadata cache of this tenant 
+        manually. Uses the menu option <b>Clear OData metadata cache</b> in the tenant context for this.
+        </p>
         <button type="button" onClick='return sendRequest()'>Senden</button>
     </form>
     <div><pre id="result"></pre></div>
