@@ -216,6 +216,42 @@ This section defines namespaces that are not allowed to extend.
 This section defines artefacts (entities, services) that are allowed to be extended. If a tenant tries to extend another than these artefacts the
 extension will be rejected.
 
+### Business logic in CatalogService
+
+For simplicity reasons I realized the entire CAP functionality regarding mtx in CatalogService. There are a few actions an functions for that.
+
+Most of those use the `ModelService` that is provided by the mtx module. Others use the REST API that is exposed by the same module.
+The ModelService is not documented whereas the API is (but not very well). Using the ModelService directly seems to be more straight forward. But it
+has one drawback. When directly calling the functions of this service the req and with it the authentication context (JWT) is not transmitted to 
+the functions. 
+
+Hence I implemented my own event handlers for this service and set the auth context into the context of the handlers before I call the original handler 
+in the chain. See [ModelService.ts](./srv/modelservice.ts) for details.
+
+For the UpgradeBaseModelAPI action I chose to use the API. The implementation is realized in [mtxapis.ts](./srv/mtxapis.ts).
+
+## Internals of mtx with CAP
+
+When using mtx with CAP two HDI containers are created for each tenant. 
+
+- a container with name === subaccount-id
+- a container with name === TENANT-subaccount-id
+
+The first container holds the CAP entities, the later contains some metadata and the CAP sources, the compiled versions and, in case of extension, the extension sources.
+The CAP stuff is saved in the table `TENANT_FILES`. The content looks like follows.
+
+![TENANT_FILES](./docu/TENANT_FILES.png)
+
+- The files of TYPE = 'base' are the source files of your development project.  
+- The files of TYPE = 'compiled' are the compiled files that are used by the mtx module to serve the application.
+- The files of TYPE = 'extension' are your extension files.
+
+Each time you add extensions they are saved here. If you reset the model or deactivate extensions the row of the table are deleted.
+
+### Upgrade Base Model 
+
+The upgrade base model functionality updates all table rows of TYPE = 'base' with the content of the original files of your deployed CAP project.
+
 ## Troubleshooting / Hints
 
 ### Metadata not updated after redeployment of app
