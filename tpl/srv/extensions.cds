@@ -1,7 +1,7 @@
 /* uncomment and modify as needed
 using CatalogService from '_base/srv/catalog-service'; 
 
-using Z_app1.db as db from '../db/new'; 
+using Z_app147110815.db as db from '../db/new'; 
 
 extend service CatalogService with {
 

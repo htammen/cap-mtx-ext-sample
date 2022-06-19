@@ -1,4 +1,4 @@
-using {app1.db as db} from '../db/data-model';
+using {app147110815.db as db} from '../db/data-model';
 
 using {CV_SALES, CV_SESSION_INFO} from '../db/data-model';
 

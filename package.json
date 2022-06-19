@@ -1,5 +1,5 @@
 {
-  "name": "app1",
+  "name": "app147110815",
   "version": "0.0.1",
   "repository": "<Add your repository here>",
   "license": "UNLICENSED",
@@ -39,8 +39,8 @@
     "start_with_server": "CDS_ENV=production cds-ts run",
     "start_local_ui": "echo 'Starting UI locally' && cd ./app && node custom.js",
     "build": "tsc && mbt build",
-    "deploy": "cf deploy ./mta_archives/app1_0.0.1.mtar",
-    "upd-defenv": "cf de app1-srv"
+    "deploy": "cf deploy ./mta_archives/app147110815_0.0.1.mtar",
+    "upd-defenv": "cf de app147110815-srv"
   },
   "eslintConfig": {
     "extends": "eslint:recommended",
@@ -168,12 +168,12 @@
       "namespace-blocklist": [
         "com.sap.",
         "sap.",
-        "app1."
+        "app147110815."
       ],
       "extension-allowlist": [
         {
           "for": [
-            "app1.db.Sales"
+            "app147110815.db.Sales"
           ]
         },
         {

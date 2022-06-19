@@ -45,7 +45,7 @@ export = (srv: Service) => {
     try {
       const tx = cds.tx(req);
       // @ts-ignore('later')
-      const results = await tx.run(`CALL "APP1_DB_SP_TopSales"(?,?)`, [
+      const results = await tx.run(`CALL "APP147110815_DB_SP_TopSales"(?,?)`, [
         req.data.amount,
       ]);
       return results;
@@ -183,7 +183,7 @@ export = (srv: Service) => {
 
   srv.on("restartApp", async (req: Request) => {
     log.info("Calling restartApp action");
-    await cfcommands.restartApp("app1-srv");
+    await cfcommands.restartApp("app147110815-srv");
     log.info("Finished restartApp action");
   });
 

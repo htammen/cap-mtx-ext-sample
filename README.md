@@ -1,4 +1,4 @@
-# app1 - Basic CAP App (multitenancy)
+# app147110815 - Basic CAP App (multitenancy)
 > Simple multitenancy Business Application
 
 This project demonstrates the possibilities of CAP Extensibility in a multitenant environment (mtx).  
@@ -37,10 +37,10 @@ Before the app can be used you have to configure it.
 #### Configuring destination
 
 The srv app uses the cloud foundry api for creating the tenant routes, when restarting the app and ...  
-The access to this api is implemented via the destination service **app1-dest**.  
+The access to this api is implemented via the destination service **app147110815-dest**.  
 
-To configure this destination goto the subaccount and space where your app is deployed. Under **instances** find the instance **app1-dest**. 
-Click on the destination to get to the dashboard. Under **destinations** click on **app1-cfapi**. Edit this destination.
+To configure this destination goto the subaccount and space where your app is deployed. Under **instances** find the instance **app147110815-dest**. 
+Click on the destination to get to the dashboard. Under **destinations** click on **app147110815-cfapi**. Edit this destination.
 
 - Enter a user (e-mail) and password who has the privilege to run cf commands (probably your user).
 - _Necessary Hack_
@@ -54,7 +54,7 @@ Click on the destination to get to the dashboard. Under **destinations** click o
 
 #### Running on BTP
 
-To run the app on BTP you just have to create a subaccount and create a subscription for the app **Basic CAP app (multitenancy) - app1**.
+To run the app on BTP you just have to create a subaccount and create a subscription for the app **Basic CAP app (multitenancy) - app147110815**.
 
 The tenant route for your subaccount tenant should have been created automatically during the subscription process. If it is not available please
 create it in your provider subaccount manually.
@@ -66,22 +66,22 @@ To be able to extend the service and db layers you additionally need the roles *
 
 These roles are exposed via the role collections 
 
-- app1_Viewer
-- app1_Administrator
-- app1_Extension_Developer
-- app1_Extension_Developer_Delete
+- app147110815_Viewer
+- app147110815_Administrator
+- app147110815_Extension_Developer
+- app147110815_Extension_Developer_Delete
 
 Hence assign these role collections to your user or any user who should work with the application.
 
 ##### Debug on BTP
 
-- `cf enable-ssh app1-srv` (only needed once)
-- `cf ssh app1-srv`
+- `cf enable-ssh app147110815-srv` (only needed once)
+- `cf ssh app147110815-srv`
 - `ps aux`
 - find pid for **node /home/vcap/app/node_modules/.bin/cds run**
 - `kill -usr1 <pid>` (starts nodejs in debugging mode)
 - `exit` (exit ssh)
-- `cf ssh -N -L 9229:127.0.0.1:9229 app1-srv`
+- `cf ssh -N -L 9229:127.0.0.1:9229 app147110815-srv`
 - open chrome browser
 - `chrome://inspect`
 - Click **Open dedicated DevTools for Node**
@@ -105,12 +105,12 @@ Additionally you have to do the following tasks
 ###### Load app environment for srv app
 
 - `cd <project root folder>
-- `cf de app1-srv` (the `DefaultEnv` cf plugin must be installed)
+- `cf de app147110815-srv` (the `DefaultEnv` cf plugin must be installed)
 
 ###### Load app environment for ui app
 
 - `cd <project root folder>/app` (cd's into the ui module)
-- `cf de app1`
+- `cf de app147110815`
 
 ###### Adjust app environment for ui app
 
@@ -118,7 +118,7 @@ To be able to work with a tenant environment you have to edit the downloaded env
 
 - Open `default-env.json` in an editor
 - At the end add the following lines (overwrite the existing `destinations` entry.
-    - "TENANT_HOST": "<your subaccount subdomain>-dev-app1.cfapps.eu20.hana.ondemand.com",
+    - "TENANT_HOST": "<your subaccount subdomain>-dev-app147110815.cfapps.eu20.hana.ondemand.com",
     - "EXTERNAL_REVERSE_PROXY": true,
     - "destinations": "[ {\n  \"forwardAuthToken\" : true,\n  \"name\" : \"srv\",\n  \"timeout\" : 60000,\n  \"url\" : \"http://localhost:4004\"\n} ]"
 - Replace <your subaccount subdomain> with the subdomain of the tenant-subaccount you want to work with.
@@ -184,12 +184,12 @@ the app can't be extended.
       "namespace-blocklist": [
         "com.sap.",
         "sap.",
-        "app1."
+        "app147110815."
       ],
       "extension-allowlist": [
         {
           "for": [
-            "app1.db.Sales"
+            "app147110815.db.Sales"
           ]
         },
         {
@@ -258,7 +258,7 @@ The upgrade base model functionality updates all table rows of TYPE = 'base' wit
 
 Problem:
 
-After you altered the service layer (app1-srv) and deployed your changes to CF you don't see the changes in your existing tenants.
+After you altered the service layer (app147110815-srv) and deployed your changes to CF you don't see the changes in your existing tenants.
 
 Solution:
 
@@ -273,4 +273,4 @@ After you have redeployed your application to the server you get this error mess
 
 Solution:
 
-Run `cf de app1-srv` to download the neweset VCAP environment from the server.
+Run `cf de app147110815-srv` to download the neweset VCAP environment from the server.

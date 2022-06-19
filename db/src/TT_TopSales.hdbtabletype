@@ -1,4 +1,4 @@
-TYPE "APP1_DB_TT_TopSales" AS TABLE (
+TYPE "APP147110815_DB_TT_TopSales" AS TABLE (
   "ID" INTEGER,
   "region" NVARCHAR(100),
   "country" NVARCHAR(100),

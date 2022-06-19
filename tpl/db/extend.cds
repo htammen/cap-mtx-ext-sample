@@ -1,5 +1,5 @@
 /* uncomment and modify as needed
-using app1.db from '_base/db/data-model.cds';
+using app147110815.db from '_base/db/data-model.cds';
 
 extend entity db.Sales with {
     Z_custom1 : String(100);
