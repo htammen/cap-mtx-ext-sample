@@ -40,9 +40,9 @@ modules:
       - name: srv-api
         properties:
           srv-url: ${default-url}
-
-
-
+      - name: mtx-api
+        properties:
+          uri: ${default-uri}
 
   # ------------------ APP ROUTER MODULE -----------------------
   - name: app1
@@ -91,7 +91,7 @@ resources:
         xsappname: ${xsuaa-app}
     properties:
       XSAPPNAME: ${xsuaa-app}
-    requires: 
+    requires:
       - name: app_api
 
   # -------------------- DESTINATION SERVICE -------------------
@@ -118,17 +118,15 @@ resources:
                 User: <SetValueInCockpit>
                 Password: <SetValueInCockpit>
 
-
-
-
-
-
   # --------------------- REGISTRY SERVICE ---------------------
   - name: app1-registry
   # ------------------------------------------------------------
     type: org.cloudfoundry.managed-service
     requires:
       - name: app1-uaa
+      - name: mtx-api
+        properties:
+          prop: ~{uri}
     parameters:
       service: saas-registry
       service-plan: application
@@ -139,7 +137,7 @@ resources:
         description: 'Simple multitenancy Business Application'
         category: 'SaaS Multitenant Apps'
         appUrls:
-          onSubscription: https://${org}-${space}-app1-srv.${default-domain}/mtx/v1/provisioning/tenant/{tenantId}
+          onSubscription: https://~{mtx-api/uri}/mtx/v1/provisioning/tenant/{tenantId}
 
   # ------------------- SERVICE MANAGER SERVICE ----------------
   - name: app1-sm
