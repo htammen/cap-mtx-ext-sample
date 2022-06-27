@@ -93,10 +93,10 @@ export = (srv: Service) => {
       await modelService.activate(req.user.tenant, extensions);
       // the following emit worked in Günther's app so that a restart war not necessary
       // but it doesn't work here
-      // TODO: find another solutions
       // @ts-ignore('later')
       // await global.cds.emit("served");
-      req._.odataReq._service._getMetadataCache()._cachedMetadata.clear()
+      // metadata problem fixed with @sap/cds:5.9.8. see https://answers.sap.com/questions/13662134/clear-odata-metadata-cache.html
+      // req._.odataReq._service._getMetadataCache()._cachedMetadata.clear()
     } catch (err: any) {
       log.error(`couldn't activate extension for ${req.user.tenant}.`, err);
       throw new Error(`error while activating extensions.\n${JSON.stringify(err.toJSON(), null, 2)}`);
@@ -120,10 +120,10 @@ export = (srv: Service) => {
       const apiResult = await modelService.deactivate(req.user.tenant, files);
       // the following emit worked in Günther's app so that a restart war not necessary
       // but it doesn't work here
-      // TODO: find another solutions
       // @ts-ignore('later')
       // await global.cds.emit("served");
-      req._.odataReq._service._getMetadataCache()._cachedMetadata.clear()
+      // metadata problem fixed with @sap/cds:5.9.8. see https://answers.sap.com/questions/13662134/clear-odata-metadata-cache.html
+      // req._.odataReq._service._getMetadataCache()._cachedMetadata.clear()
     } catch (err: any) {
       log.error(`error deactivating extensions`, err);
       throw new Error(`error while deactivating extension.\n${JSON.stringify(err.toJSON(), null, 2)}`);
