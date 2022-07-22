@@ -1,5 +1,5 @@
 _schema-version: '3.2'
-ID: app1
+ID: cap-papm-cap
 version: 0.0.1
 
 parameters:
@@ -86,7 +86,7 @@ resources:
       service: xsuaa
       service-plan: application
       path: ./xs-security.json
-      xsuaa-app: ${space}-~{app_api/application}
+      xsuaa-app: cap-papm-cap
       config:
         xsappname: ${xsuaa-app}
     properties:
@@ -132,7 +132,7 @@ resources:
       service-plan: application
       config:
         xsappname: ~{app1-uaa/XSAPPNAME}
-        appName: app1
+        appName: cap-papm-cap
         displayName: 'Basic CAP App (multitenancy)'
         description: 'Simple multitenancy Business Application'
         category: 'SaaS Multitenant Apps'
