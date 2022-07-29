@@ -5,27 +5,74 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta http-equiv="Content-Type" content="text/html;charset=UTF-8" />
     <title>Basic CAP App (multitenancy)</title>
+
+    <style>
+      .tooltip-text {
+        visibility: hidden;
+        position: absolute;
+        z-index: 1;
+        width: 100px;
+        color: white;
+        font-size: 12px;
+        background-color: #192733;
+        border-radius: 10px;
+        padding: 10px 15px 10px 15px;
+      }
+      .hover-text:hover .tooltip-text {
+        visibility: visible;
+      }
+    </style>
 </head>
 
 <body>
     <h2>Simple multitenancy Business Application</h2>
     <h3>Catalog</h3>
-    <a href="/catalog/">Catalog</a><br />
-    <a href="/catalog/$metadata">Metadata</a><br />
-    <a href="/catalog/Sales">Sales</a><br />
-    <a href="/catalog/Sales?$apply=filter(amount%20gt%20700)/groupby((region),aggregate($count%20as%20nrCountries))">Top Sales Count</a><br />
-    <a href="/catalog/topSales(amount=700)">Top Sales</a><br />
-    <a href="/catalog/VSales">Sales by Region</a><br />
-    <a href="/catalog/SessionInfo">Session Info</a><br />
-    <a href="/catalog/userInfo()">User Info</a><br />
-    <a href="./createExtension.html">Create Extension</a><br />
-    <a href="./deactivateExtensions.html">Deactivate several Extensions</a><br />
-    <a href="./upgradeBaseModel.html">Upgrade Base Model</a><br />
-    <a href="./upgradeBaseModelAPI.html">Upgrade Base Model via API</a><br />
-    <a href="./resetTenant.html">Reset all Tenant Extensions</a><br />
-    <a href="./restartApp.html">Restart Application</a><br />
-    <a href="/catalog/clearMetadataCache()">Clear OData metadata cache</a><br />
-    <a href="./dummy.html">Dummy for debugging</a><br />
+    <p><i>Hover over the menu items to get an explanation tooltip</i></p>
+    <div class="hover-text"><a href="/catalog/">Catalog</a>
+      <span class="tooltip-text">See the OData service catalog</span>
+    </div>
+    <div class="hover-text"><a href="/catalog/$metadata">Metadata</a>
+      <span class="tooltip-text">OData service metadata</span>
+    </div>
+    <div class="hover-text"><a href="/catalog/Sales">Sales</a>
+      <span class="tooltip-text">Have a look at the data in the sales table</span>
+    </div>
+    <div class="hover-text"><a href="/catalog/Sales?$apply=filter(amount%20gt%20700)/groupby((region),aggregate($count%20as%20nrCountries))">Top Sales Count</a>
+      <span class="tooltip-text">A view on the Sales table with a complex filter, grouping and aggregation</span>
+    </div>
+    <div class="hover-text"><a href="/catalog/topSales(amount=700)">Top Sales</a>
+      <span class="tooltip-text">Call a stored procedure in the HANA database</span>
+    </div>
+    <div class="hover-text"><a href="/catalog/VSales">Sales by Region</a>
+      <span class="tooltip-text">Call a calculation view in the HANA database</span>
+    </div>
+    <div class="hover-text"><a href="/catalog/SessionInfo">Session Info</a>
+      <span class="tooltip-text">See some info to the current HANA session</span>
+    </div>
+    <div class="hover-text"><a href="/catalog/userInfo()">User Info</a>
+      <span class="tooltip-text">See some info to your logged in user (includes the access token)</span>
+    </div>
+    <div class="hover-text"><a href="./createExtension.html">Create Extension...</a>
+      <span class="tooltip-text">Create extensions in the current tenant</span>
+    </div>
+    <div class="hover-text"><a href="./deactivateExtensions.html">Deactivate several Extensions...</a>
+      <span class="tooltip-text">Delete / deactivate extensions in the current tenant</span>
+    </div>
+    <div class="hover-text"><a href="./upgradeBaseModel.html">Upgrade Base Model...</a>
+      <span class="tooltip-text">Upgrade the model of this tenant to the newest model of the provider tenant</span>
+    </div>
+    <div class="hover-text"><a href="./upgradeBaseModelAPI.html">Upgrade Base Model via API...</a>
+      <span class="tooltip-text">Upgrade the model of this tenant to the newest model of the provider tenant.</br>As before but uses the http API</span>
+    </div>
+    <div class="hover-text"><a href="./resetTenant.html">Reset all Tenant Extensions...</a>
+      <span class="tooltip-text">Removes all extensions from the tenant</span>
+    </div>
+    <div class="hover-text"><a href="./restartApp.html">Restart Application...</a>
+      <span class="tooltip-text">Restarts the app in the provider tenant via the CF API</span>
+    </div>
+    <div class="hover-text"><a href="/catalog/clearMetadataCache()">Clear OData metadata cache</a>
+      <span class="tooltip-text">Clears CAPs OData metadata cache at server side</span>
+    </div>
 </body>
 
 </html>

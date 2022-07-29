@@ -118,10 +118,11 @@ To be able to work with a tenant environment you have to edit the downloaded env
 
 - Open `default-env.json` in an editor
 - At the end add the following lines (overwrite the existing `destinations` entry.
-    - "TENANT_HOST": "<your subaccount subdomain>-dev-app1.cfapps.eu20.hana.ondemand.com",
+    - "TENANT_HOST": "<your subaccount subdomain>-dev-app1.cfapps.<your region>.hana.ondemand.com",
     - "EXTERNAL_REVERSE_PROXY": true,
     - "destinations": "[ {\n  \"forwardAuthToken\" : true,\n  \"name\" : \"srv\",\n  \"timeout\" : 60000,\n  \"url\" : \"http://localhost:4004\"\n} ]"
 - Replace <your subaccount subdomain> with the subdomain of the tenant-subaccount you want to work with.
+- Replace <your region> with the region you are working in.
 - Save the file
 
 ##### Start the srv app
@@ -235,7 +236,7 @@ For the UpgradeBaseModelAPI action I chose to use the API. The implementation is
 When using mtx with CAP two HDI containers are created for each tenant. 
 
 - a container with name === subaccount-id
-- a container with name === TENANT-subaccount-id
+- a container with name === TENANT-subaccount-id-META
 
 The first container holds the CAP entities, the later contains some metadata and the CAP sources, the compiled versions and, in case of extension, the extension sources.
 The CAP stuff is saved in the table `TENANT_FILES`. The content looks like follows.
@@ -254,7 +255,8 @@ The upgrade base model functionality updates all table rows of TYPE = 'base' wit
 
 ## Troubleshooting / Hints
 
-### Metadata not updated after redeployment of app
+### ~~Metadata not updated after redeployment of app~~
+**FIXED WITH CAP 5.9.8**
 
 Problem:
 
