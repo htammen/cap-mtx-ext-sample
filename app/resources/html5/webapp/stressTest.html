@@ -1,0 +1,201 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta http-equiv="Content-Type" content="text/html;charset=UTF-8" />
+    <title>Stress Test</title>
+
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script>
+      function onLoad() {
+        this.document.getElementById("sCode1").value = `using app1.db from '_base/db/data-model.cds';
+
+extend entity db.Sales with {
+    Z_helmut1 : String(15);
+    Z_helmut2 : Integer;
+};
+`;
+        this.document.getElementById("sFname1").value = "db/Sales.cds";
+        this.document.getElementById("sCode2").value = `namespace Z_app1.db;
+
+entity Z_Custom {
+    key ID          : Integer;
+        description : String(100);
+};
+`;
+        this.document.getElementById("sFname2").value = "db/new.cds";
+        this.document.getElementById("sCode3").value = `using CatalogService from '_base/srv/catalog-service'; 
+
+using Z_app1.db as db from '../db/new'; 
+
+extend service CatalogService with {
+
+    @readonly
+    entity Z_Custom
+      @(restrict: [{ to: 'Viewer' }])
+      as select * from db.Z_Custom;
+
+};
+`;
+        this.document.getElementById("sFname3").value = "srv/extensions.cds";
+        this.document.getElementById("sRepeat").value = 5;
+        this.document.getElementById("sDelay").value = 3;
+      }
+
+      function sleep(ms) {
+        return new Promise(resolve => setTimeout(resolve, ms));
+      }
+
+      async function sendRequests(evt) {
+        const nRepeat = Number.parseInt(this.document.getElementById("sRepeat").value);
+        const nDelay = Number.parseInt(this.document.getElementById("sDelay").value) * 1000;
+        let error = undefined;
+        for(let i=0; i<nRepeat; i++) {
+          await sleep(500);
+          try {
+          const activateResult = await sendActivateRequest(i);
+          if(activateResult) {
+            await sleep(nDelay);
+            const deactivateResult = await sendDeactivateRequest(i);
+          }
+          } catch(ex) {
+            error = ex.message;
+            break;
+          }
+        }
+        if(error) {
+          this.document.getElementById("result").innerHTML = "Something went wrong: " + error;
+        } else {
+          this.document.getElementById("result").innerHTML = "Stress test finished"
+        }
+      }
+      
+      async function sendActivateRequest(counter) {
+        return new Promise((resolve, reject) => {
+          this.document.getElementById("result").innerHTML = "Be a little bit patient. The data for ACTIVATION has been sent to the server.\nAs soon as the server has finished you will see the results here\ncounter: " + counter;
+          var sFname = this.document.getElementById("sFname1").value;
+          var sCode = this.document.getElementById("sCode1").value;
+          let aSnippets = [];
+          for(let i=0; i<3; i++) {
+                  const sFname = this.document.getElementById(`sFname${i+1}`).value;
+                  const sCode = this.document.getElementById(`sCode${i+1}`).value;
+                  if(sFname && sFname.trim().length > 0) {
+                    aSnippets.push({
+                      sFilename: sFname,
+                      sCode: sCode
+                    })
+                  }
+          }
+          axios({ url: '/catalog/Sales',
+                  method: 'get',
+                  headers: {'X-CSRF-TOKEN': 'Fetch'}
+                })
+            .then(res => {
+                    return res.headers['x-csrf-token']
+            })
+            .then(token => {
+                    return axios({
+                            url: '/catalog/activateExtension',
+                            method: 'post',
+                            headers: {
+                                    "Content-Type": "application/json",
+                                    "x-csrf-token": token 
+                                  },
+                            data: {
+                                    aSnippets
+                                  }
+                          })
+            })
+            .then(response => {
+              this.document.getElementById("result").innerHTML = JSON.stringify(response.data, null, 2);
+              resolve(true);
+            })
+            .catch( error => {
+              this.document.getElementById("result").innerHTML = JSON.stringify(error.response, null, 2);
+              reject();
+            })
+        })
+      }
+
+
+      function sendDeactivateRequest(counter) {
+        return new Promise((resolve, reject) => {
+          this.document.getElementById("result").innerHTML = "Be a little bit patient. The data for DEACTIVATION has been sent to the server.\nAs soon as the server has finished you will see the results here\ncounter: " + counter;
+          let aFiles = [];
+          for(let i=0; i<3; i++) {
+                  const sFname = this.document.getElementById(`sFname${i+1}`).value;
+                  if(sFname && sFname.trim().length > 0) {
+                    aFiles.push(sFname)
+                  }
+          }
+          axios({ url: '/catalog/Sales',
+                  method: 'get',
+                  headers: {'X-CSRF-TOKEN': 'Fetch'}
+                })
+            .then(res => {
+                    return res.headers['x-csrf-token']
+            })
+            .then(token => {
+                    return axios({
+                            url: '/catalog/deactivateExtension',
+                            method: 'post',
+                            headers: {
+                                    "Content-Type": "application/json",
+                                    "x-csrf-token": token 
+                                  },
+                            data: {
+                                    files: aFiles
+                                  }
+                          })
+            })
+            .then(response => {
+              this.document.getElementById("result").innerHTML = response.data.value;
+              resolve(true);
+            })
+            .catch( error => {
+              this.document.getElementById("result").innerHTML = JSON.stringify(error.response, null, 2);
+              reject();
+            })
+        })
+      }
+    </script>
+</head>
+
+<body onload='onLoad()'>
+    <h2>Stress Test</h2>
+    <p>This page sends an activate and subsequent deactivate extensions to the server.</br>
+       After every single request it waits x seconds before the next request is send. That makes sure
+       that the garbage collector has some time to clean the heap.
+    </p>
+    <form>
+        <h3>Settings</h3>
+        Repeat count:<br>
+        <input id="sRepeat" type="text" name="repeat"></input><br>
+        Delay bewtween single calls (in seconds):<br>
+        <input id="sDelay" type="text" name="delay"></input>
+        <h3>Extensions</h3>
+        Filename 1:<br>
+        <input id="sFname1" type="text" name="filename1"></input>
+        <br/> Code:
+        <br/>
+        <textarea id="sCode1" cols="50" rows="10" name="code1"></textarea>
+        <br/>
+        Filename 2:<br>
+        <input id="sFname2" type="text" name="filename2"></input>
+        <br/> Code:
+        <br/>
+        <textarea id="sCode2" cols="50" rows="10" name="code2"></textarea>
+        <br/>
+        Filename 3:<br>
+        <input id="sFname3" type="text" name="filename3"></input>
+        <br/> Code:
+        <br/>
+        <textarea id="sCode3" cols="50" rows="10" name="code3"></textarea>
+        <br/>
+        <button type="button" onClick='return sendRequests()'>Senden</button>
+    </form>
+    <div><pre id="result"></pre></div>
+</body>
+
+</html>

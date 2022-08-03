@@ -4,15 +4,37 @@ import { Service, Request } from "@sap/cds/apis/services";
 import log from "cf-nodejs-logging-support";
 import * as cfcommands from "./cfcommands";
 import * as mtxapis from "./mtxapis";
+import { Monitoring } from "./src/monitoring";
 
 // @ts-ignore('later')
 // import * as error_helper from "./error_helper";
 require("./error_helper");
 
-export = (srv: Service) => {
-  const { Sales } = srv.entities;
+export class CatalogService extends cds.ApplicationService {
+  private Sales: any;
+  private monitoring: Monitoring = new Monitoring();
 
-  srv.after("READ", Sales, (each: any, req: Request) => {
+  async init() {
+    this.Sales = this.entities.Sales;
+    this.after("READ", this.Sales, this.afterReadSales);
+    this.on("boost", this.onBoost);
+    this.on("topSales", this.onTopSales);
+    this.on("userInfo", this.onUserInfo);
+    this.on("activateExtension", this.onActivateExtension);
+    this.on("deactivateExtension", this.onDeactivateExtension);
+    this.on("resetTenant", this.onResetTenant);
+    this.on("upgradeBaseModel", this.onUpgradeBaseModel);
+    this.on("upgradeBaseModelAPI", this.onUpgradeBaseModelAPI);
+    this.on("restartApp", this.onRestartApp);
+    this.on("clearMetadataCache", this.onClearMetadataCache);
+    // this.on("getMonitoringData", this.onGetMonitoringData);
+    this.on("dummy", this.onDummy);
+    
+    await super.init( );
+  }
+
+
+  afterReadSales(each: any) {
     if (each.amount > 500) {
       each.criticality = 3;
       if (each.comments === null) each.comments = "";
@@ -24,24 +46,24 @@ export = (srv: Service) => {
     } else {
       each.criticality = 2;
     }
-  });
+  }
 
-  srv.on("boost", async (req: Request) => {
+  async onBoost(req: Request) {
     try {
       const ID = req.params[0];
       const tx = cds.tx(req);
       await tx
-        .update(Sales)
+        .update(this.Sales)
         .with({ amount: { "+=": 250 }, comments: "Boosted!" })
         .where({ ID: { "=": ID } });
       return {};
     } catch (err: any) {
       log.error(`error boosting`, err);
-      return {};
+      return {}
     }
-  });
+  }
 
-  srv.on("topSales", async (req: Request) => {
+  async onTopSales(req: Request) {
     try {
       const tx = cds.tx(req);
       // @ts-ignore('later')
@@ -53,9 +75,11 @@ export = (srv: Service) => {
       log.error(`error topSales`, err);
       return {};
     }
-  });
+  }
 
-  srv.on("userInfo", (req: Request) => {
+  onUserInfo(req: Request) {
+    //@ts-ignore
+    // this.monitoring.addMemoryInfo("onUserInfo before", process.memoryUsage());
     const results: any = {};
     results.user = req.user.id;
     if (req.user.hasOwnProperty("locale")) {
@@ -74,10 +98,20 @@ export = (srv: Service) => {
     results.scopes.ExtendCDSdelete = req.user.is("ExtendCDSdelete");
     //@ts-ignore('later')
     results.authorization = req._.headers.authorization;
+    // this.monitoring.addMemoryInfo("onUserInfo after", process.memoryUsage());
     return results;
-  });
+  }
 
-  srv.on("activateExtension", async (req: Request) => {
+  logMemory() {
+      const memory = process.memoryUsage()
+      log.info(`This process used ${memory.rss / 1024 / 1024} MB memory in total`)
+      log.info(`This process used ${memory.heapTotal / 1024 / 1024} MB total heap`)
+      log.info(`This process used ${memory.heapUsed / 1024 / 1024} MB used heap`)
+  }
+
+  async onActivateExtension(req: Request) {
+    const startTime = new Date().getTime();
+    await this.monitoring.addMemoryInfo("onActivateExtensionBefore", process.memoryUsage(), 0);
     log.info("Calling activateExtension action");
     const results: { tenant: string | undefined; extension: string } = {} as any;
 
@@ -106,10 +140,15 @@ export = (srv: Service) => {
     results.extension = JSON.stringify(extensions, null, 2);
 
     log.info("Finished activateExtension action");
+    const endTime = new Date().getTime();
+    const diff = (endTime - startTime) / 1000.0;
+    await this.monitoring.addMemoryInfo("onActivateExtensionAfter", process.memoryUsage(), diff);
     return results;
-  });
+  }
 
-  srv.on("deactivateExtension", async (req: any) => {
+  async onDeactivateExtension(req: any) {
+    const startTime = new Date().getTime();
+    await this.monitoring.addMemoryInfo("onDeactivateExtensionBefore", process.memoryUsage(), 0);
     log.info("Calling deactivateExtension action");
     try {
       const { files } = req.data;
@@ -129,10 +168,13 @@ export = (srv: Service) => {
       throw new Error(`error while deactivating extension.\n${JSON.stringify(err.toJSON(), null, 2)}`);
     }
     log.info("Finished deactivateExtension action");
+    const endTime = new Date().getTime();
+    const diff = (endTime - startTime) / 1000.0;
+    await this.monitoring.addMemoryInfo("onDeactivateExtensionAfter", process.memoryUsage(), diff);
     return "deactivateExtension executed successfully";
-  });
+  }
 
-  srv.on("resetTenant", async (req: Request) => {
+  async onResetTenant(req: Request) {
     log.info("Calling resetTenant action");
     try {
       const modelService = await cds.connect.to("ModelService");
@@ -144,9 +186,9 @@ export = (srv: Service) => {
     }
     log.info("Finished resetTenant action");
     return "resetTenant executed successfully";
-  });
+  }
 
-  srv.on("upgradeBaseModel", async (req: Request) => {
+  async onUpgradeBaseModel(req: Request) {
     log.info("Calling upgradeBaseModel action");
     // just a copy of resetTenant.
     // action upgrade (tenants: Array of String(200), base: JSON, autoUndeploy: Boolean, advancedOptions: ADVANCED_OPTIONS) returns UPGRADE_RESULT;
@@ -160,9 +202,9 @@ export = (srv: Service) => {
     }
     log.info("Finshed upgradeBaseModel action");
     return "upgradeBaseModel executed successfully";
-  });
+  }
 
-  srv.on("upgradeBaseModelAPI", async (req: Request) => {
+  async onUpgradeBaseModelAPI(req: Request) {
     log.info("Calling upgradeBaseModelAPI action");
     const { tenantid } = req.data;
     const tenant = tenantid || req.user.tenant || '';
@@ -179,25 +221,36 @@ export = (srv: Service) => {
     log.info(`Finshed upgradeBaseModelAPI action with status ${sJobResult.status}`);
     return JSON.stringify(sJobResult, null, 2);
     // return `upgradeBaseModelAPI executed successfully with status ${sJobResult.status}`;
-  });
+  }
 
-  srv.on("restartApp", async (req: Request) => {
+  async onRestartApp(req: Request) {
     log.info("Calling restartApp action");
     await cfcommands.restartApp("app1-srv");
     log.info("Finished restartApp action");
-  });
+  }
 
-  srv.on("clearMetadataCache", (req: Request) => {
+  onClearMetadataCache(req: Request) {
     //@ts-ignore('later')
     req._.odataReq._service._getMetadataCache()._cachedMetadata.clear()
     return `OData metadata cache has been cleared`;
-  });
+  };
 
-  srv.on("dummy", (req: Request) => {
+  async onGetMonitoringData(req: Request) {
+    let result: any
+    const type: string = req.data.type;
+    switch(type) {
+      case 'memory': 
+        result = await this.monitoring.getMemoryInfo()
+        break;
+    }
+    return result;
+  }
+
+  onDummy(req: Request) {
     log.info("Calling dummy action");
     log.info("Finished dummy action");
     return "dummy executed successfully";
-  });
+  }
 
   // srv.on('upgradeBaseModel', async (req) => {
   //   console.log('Calling upgradeBaseModel function');
@@ -234,5 +287,5 @@ export = (srv: Service) => {
 
   //   return results;
   // });
-};
+}
 

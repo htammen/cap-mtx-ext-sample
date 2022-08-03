@@ -1,0 +1,66 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta http-equiv="Content-Type" content="text/html;charset=UTF-8" />
+    <title>Delete memory monitoring data</title>
+
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script>
+      function onLoad() {
+        this.document.getElementById("fnames").value = `srv/extensions.cds
+db/Sales.cds
+db/new.cds
+`;
+      }
+      
+      function sendRequest(evt) {
+        const sConfirmation = this.document.getElementById("sConfirmation").value;
+        if(sConfirmation === 'Yes') {
+              this.document.getElementById("result").innerHTML = "All memory data collected by the monitoring service will be deleted.\nAs soon as the server has finished you will see the results here";
+              axios({ url: '/monitoring/Memorys',
+                      method: 'get',
+                      headers: {'X-CSRF-TOKEN': 'Fetch'}
+                    })
+                .then(res => {
+                        return res.headers['x-csrf-token']
+                })
+                .then(token => {
+                        return axios({
+                                url: '/monitoring/Memorys',
+                                method: 'delete',
+                                headers: {
+                                        "Content-Type": "application/json",
+                                        "x-csrf-token": token 
+                                      },
+                                data: {
+                                      }
+                              })
+                })
+                .then(response => {
+                  this.document.getElementById("result").innerHTML = "All memory data collected by the monitoring service has been deleted.";
+                })
+                .catch( error => {
+                  this.document.getElementById("result").innerHTML = JSON.stringify(error.response, null, 2);
+                })
+        } else {
+          this.document.getElementById("result").innerHTML = "Deletion of data aborted by user";
+        }
+      }
+    </script>
+</head>
+
+<body onload='onLoad()'>
+    <h2>Do you really want to delete all memory data that was collected by the activation / deactivation of extensions</h2>
+    <form>
+        Input 'Yes' to delete all data:
+        <br/>
+        <input id="sConfirmation" cols="50" rows="12" name="sconfirm"></input>
+        <br/>
+        <button type="button" onClick='return sendRequest()'>Senden</button>
+    </form>
+    <div><pre id="result"></pre></div>
+</body>
+
+</html>

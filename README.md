@@ -1,3 +1,40 @@
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+**Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
+
+- [app1 - Basic CAP App (multitenancy)](#app1---basic-cap-app-multitenancy)
+  - [Just run the app](#just-run-the-app)
+  - [Project structure](#project-structure)
+  - [Build and Deploy the app](#build-and-deploy-the-app)
+  - [Configuring and running the app](#configuring-and-running-the-app)
+    - [Configuration](#configuration)
+      - [Configuring destination](#configuring-destination)
+    - [Running the app](#running-the-app)
+      - [Running on BTP](#running-on-btp)
+        - [Assign role collections to users](#assign-role-collections-to-users)
+        - [Debug on BTP](#debug-on-btp)
+      - [Running on local PC (debugging)](#running-on-local-pc-debugging)
+        - [Load app environment](#load-app-environment)
+          - [Load app environment for srv app](#load-app-environment-for-srv-app)
+          - [Load app environment for ui app](#load-app-environment-for-ui-app)
+          - [Adjust app environment for ui app](#adjust-app-environment-for-ui-app)
+        - [Start the srv app](#start-the-srv-app)
+        - [Start the ui app](#start-the-ui-app)
+  - [Description UI layer](#description-ui-layer)
+    - [Fiori](#fiori)
+      - [Sales app](#sales-app)
+      - [Memory monitoring app](#memory-monitoring-app)
+    - [HTML5](#html5)
+  - [Business logic](#business-logic)
+    - [Business logic in CatalogService](#business-logic-in-catalogservice)
+  - [Internals of mtx with CAP](#internals-of-mtx-with-cap)
+    - [Upgrade Base Model](#upgrade-base-model)
+  - [Troubleshooting / Hints](#troubleshooting--hints)
+    - [~~Metadata not updated after redeployment of app~~](#metadata-not-updated-after-redeployment-of-app)
+    - [When working on local PC I get [ERROR] GET - /v1/service_offerings - Query: {"fieldQuery":"catalog_name eq 'hana'"} - Could not fetch access token Request failed with status code 401](#when-working-on-local-pc-i-get-error-get---v1service_offerings---query-fieldquerycatalog_name-eq-hana---could-not-fetch-access-token-request-failed-with-status-code-401)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 # app1 - Basic CAP App (multitenancy)
 > Simple multitenancy Business Application
 
@@ -9,6 +46,12 @@ The extensions are not hard coded but can be added at runtime of the app.
 So they need to be installed as global packages.  
 `npm i -g typescript`  
 `npm i -g ts-node`**
+
+## Just run the app
+
+The current version of the app is available at [BTP](https://hx2lrw77df7sk40dc2-dev-app1.cfapps.eu20.hana.ondemand.com/).  
+Just login with any user of the global SAP IdP. *If it's not running I (Helmut) haven't started the HANA database of my free tier account that day. 
+In that case <a href="mailto:helmut.tammen.ext@nexontis.com">contact</a> me or run it in your BTP account like described below.
 
 ## Project structure
 
@@ -145,20 +188,60 @@ The UI application has two menu items at the startpage
 
 ### Fiori
 
-The fiori app is a fiori elements app that allows you to manage the data of the Sales entity. With this app you can check that
-the app writes data into the right HDI container.
+There are two Fiori apps.
+
+- Sales app
+- Memory monitoring app
+
+#### Sales app
+
+This fiori app is a fiori elements app that allows you to manage the data of the Sales entity. With this app you can check that
+the app writes data into the right HDI container.  
+
+#### Memory monitoring app
+
+This app allows you to view the memory and time consumption for some actions you, the user, perform. Currently the activation and deactivation
+of extensions is monitored. When running the app you see the monitoring data prefiltered by onActivate and onDeactivate and ordered by
+creation time (descending).
+
+![Memory monitoring](./docu/memory_monitoring.png)
+
+The columns show the following data:  
+For details about the memory management of NodeJS have a look at this [web page](https://www.valentinog.com/blog/node-usage/).  
+A more detailed description can be found [here](https://www.nearform.com/blog/tracking-memory-allocation-node-js/).
+
+- triggeraction: the action that triggered the memory log. There are onActivateExtensionBefore, onActivateExtensionAfter, onDeactivateExtensionBefore, 
+onDeactivateExtensionAfter. The before data is written before an action is executed, the after data after execution.
+- createdAt: timestamp of the creation time for this entry in the database.  
+*Note: the timestamp for before and after events are the same even though there is about 3 seconds time between them. Don't know why CAP does it wrong.*
+- rss: this value shows the resident set size
+- totalheap: shows the total heap of the app.
+- usedheap: shows the heap used during the execution of the app.
+- elapsedtime: the time the action needed. This is always 0 for the before events. For the after events it displays the time diff between writing the 
+before record and the after record.
+
+There are a few more columns that can be displayed. Have a look at the table settings.
+
+This application can be run from the Launchpad of the Fiori link or from the HTML5 menu.
 
 ### HTML5
 
 The HTML5 app is more interesting. The menu items **Catalog** ... **User Info** are more or less self explaining.
 
-- **Create Extension**. Allows you to create extensions in your current tenant.
+- **Activate Extensions**. Allows you to create/activate extensions in your current tenant.
 - **Deactivate Extensions**. Allows you to deactivate one or more extensions in your tenant.
+- **Perform a stress test**. Allows to activate and deactivate extensions several times.
 - **Upgrade Base Model**. TBD (does not really do anything at the moment)
+- **Upgrade Base Model via API**. Updates the base model of the current or a defined tenant. This needs to be done every time a new version of the app 
+(either because of changed data model or service) has been deployed. This action moves the CDS content of the base app into the META HDI container of the
+client (see below for details).
 - **Reset all Tenant Extensions**. Resets all extenstions that exist in the tenant.
-- **Restart Application**. Restarts the application on the server. This is currently necessary after extensions
+- ~~**Restart Application**. Restarts the application on the server. This is no longer necessary. It was used after extensions
 have been activated (created) or deactivated. After the dialog "Finished" is displayed wait another few seconds berfore
-working with the application. The restart has not finished but just the triggering of the restart.
+working with the application. The restart has not finished but just the triggering of the restart.~~
+- ~~**Clear OData metadata cache**. Clear the cache of OData metadata hold by CAP. This is no longer necessary.~~
+- **Get Memory monitoring data**. Retrieves the memory monitoring data saved in the the database by calling the OData API. The data is presented as JSON.
+- **Fiori - Display memory monitoring data**. Convenience action to call the Fiori app for displaying memory monitoring data.
 
 ## Business logic
 

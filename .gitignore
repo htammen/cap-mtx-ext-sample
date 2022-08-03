@@ -23,3 +23,6 @@ _out
 /srv/modelservice.js
 /srv/provisioning.js
 /srv/mtxapis.js
+
+srv/src/monitoring.js
+srv/monitoring-service.js

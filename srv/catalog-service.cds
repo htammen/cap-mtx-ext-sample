@@ -1,4 +1,5 @@
 using {app1.db as db} from '../db/data-model';
+using {app1.db.monitoring as dbm} from '../db/monitoring-model';
 
 using {CV_SALES, CV_SESSION_INFO} from '../db/data-model';
 
