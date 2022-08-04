@@ -92,6 +92,22 @@
                             "entitySet": "Memorys",
                             "variantManagement": "Page",
                             "initialLoad": "Enabled",
+                            "views": {
+                                "paths": [
+                                    {
+                                        "key": "tab1",
+                                        "annotationPath": "com.sap.vocabularies.UI.v1.SelectionPresentationVariant#Default"
+                                    },
+                                    {
+                                        "key": "tab2",
+                                        "annotationPath": "com.sap.vocabularies.UI.v1.SelectionPresentationVariant#UpgradeBaseModel"
+                                    },
+                                    {
+                                        "key": "tab3",
+                                        "annotationPath": "com.sap.vocabularies.UI.v1.SelectionPresentationVariant#Chart"
+                                    }
+                                ]
+                            },
                             "navigation": {
                                 "Memorys": {
                                     "detail": {

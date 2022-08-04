@@ -15,8 +15,8 @@ annotate monitoring.Memorys with @(UI : {
         {Value : heapUsed},
         {Value : elapsedTime}
     ],
-    SelectionPresentationVariant : {
-        Text                : 'onActivate',
+    SelectionPresentationVariant #Default : {
+        Text                : 'on(De)ActivateExtension',
         $Type               : 'UI.SelectionPresentationVariantType',
         SelectionVariant    : {
             $Type         : 'UI.SelectionVariantType',
@@ -26,14 +26,58 @@ annotate monitoring.Memorys with @(UI : {
                   {
                       $Type  : 'UI.SelectionRangeType',
                       Sign   : #I,
-                      Option : #CP,
-                      Low    : 'onActivate*',
+                      Option : #EQ,
+                      Low    : 'onActivateExtensionBefore',
                   },
                   {
                       $Type  : 'UI.SelectionRangeType',
                       Sign   : #I,
-                      Option : #CP,
-                      Low    : 'onDeactivate*',
+                      Option : #EQ,
+                      Low    : 'onActivateExtensionAfter',
+                  },
+                  {
+                      $Type  : 'UI.SelectionRangeType',
+                      Sign   : #I,
+                      Option : #EQ,
+                      Low    : 'onDeactivateExtensionBefore',
+                  },
+                  {
+                      $Type  : 'UI.SelectionRangeType',
+                      Sign   : #I,
+                      Option : #EQ,
+                      Low    : 'onDeactivateExtensionAfter',
+                  } 
+                ],
+            }]
+        },
+        PresentationVariant : {
+            $Type          : 'UI.PresentationVariantType',
+            SortOrder      : [{
+                Property   : createdAt,
+                Descending : true
+            }],
+            Visualizations : ['@UI.LineItem']
+        }
+    },
+    SelectionPresentationVariant #UpgradeBaseModel : {
+        Text                : 'onUpgradeBaseModel',
+        $Type               : 'UI.SelectionPresentationVariantType',
+        SelectionVariant    : {
+            $Type         : 'UI.SelectionVariantType',
+            SelectOptions : [{
+                PropertyName : triggerAction,
+                Ranges       : [
+                  {
+                      $Type  : 'UI.SelectionRangeType',
+                      Sign   : #I,
+                      Option : #EQ,
+                      Low    : 'onUpgradeBaseModelAPIBefore',
+                  }, 
+                  {
+                      $Type  : 'UI.SelectionRangeType',
+                      Sign   : #I,
+                      Option : #EQ,
+                      Low    : 'onUpgradeBaseModelAPIAfter',
                   } 
                 ],
             }]
@@ -95,5 +139,10 @@ annotate monitoring.Memorys with {
 };
 
 
-
+annotate monitoring.Memorys with @(Aggregation.ApplySupported : {
+    GroupableProperties: [createdAt],
+    AggregatableProperties: [{
+        Property: rss
+    }]
+});    
 

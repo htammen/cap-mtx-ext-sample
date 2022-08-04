@@ -205,6 +205,8 @@ export class CatalogService extends cds.ApplicationService {
   }
 
   async onUpgradeBaseModelAPI(req: Request) {
+    const startTime = new Date().getTime();
+    await this.monitoring.addMemoryInfo("onUpgradeBaseModelAPIBefore", process.memoryUsage(), 0);
     log.info("Calling upgradeBaseModelAPI action");
     const { tenantid } = req.data;
     const tenant = tenantid || req.user.tenant || '';
@@ -219,6 +221,9 @@ export class CatalogService extends cds.ApplicationService {
     // await global.cds.emit("served");
     req._.odataReq._service._getMetadataCache()._cachedMetadata.clear()
     log.info(`Finshed upgradeBaseModelAPI action with status ${sJobResult.status}`);
+    const endTime = new Date().getTime();
+    const diff = (endTime - startTime) / 1000.0;
+    await this.monitoring.addMemoryInfo("onUpgradeBaseModelAPIAfter", process.memoryUsage(), diff);
     return JSON.stringify(sJobResult, null, 2);
     // return `upgradeBaseModelAPI executed successfully with status ${sJobResult.status}`;
   }
