@@ -5,7 +5,7 @@
   "license": "UNLICENSED",
   "description": "Simple multitenancy Business Application",
   "engines": {
-    "node": "14.x"
+    "node": "16.x"
   },
   "dependencies": {
     "@sap-cloud-sdk/core": "^1.53",
@@ -20,7 +20,8 @@
     "debug": "^4.3",
     "express": "^4",
     "hdb": "^0.19",
-    "passport": "^0.4.1"
+    "passport": "^0.4.1",
+    "serialize-error": "^11.0.0"
   },
   "devDependencies": {
     "@sap/ux-specification": "^1.96.4",
@@ -38,8 +39,8 @@
     "start": "cds run",
     "start_with_server": "CDS_ENV=production cds-ts run",
     "start_local_ui": "echo 'Starting UI locally' && cd ./app && node custom.js",
-    "build": "tsc && mbt build",
-    "deploy": "cf deploy ./mta_archives/app1_0.0.1.mtar",
+    "build": "rm mta_archives/* && tsc && mbt build",
+    "deploy": "cf deploy ./mta_archives/cap-papm-cap_0.0.1.mtar",
     "upd-defenv": "cf de app1-srv"
   },
   "eslintConfig": {

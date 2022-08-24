@@ -1,6 +1,7 @@
 const cds = require("@sap/cds");
 const { v4: uuidv4 } = require('uuid')
 import log from "cf-nodejs-logging-support";
+// import {serializeError, deserializeError} from 'serialize-error';
 // import * as cds from "@sap/cds";
 
 /**
@@ -51,6 +52,7 @@ export class Monitoring {
     const tx = monitoringService.tx();
     try {
       const Memorys = cds.entities['app1.db.monitoring.Memorys'] || cds.entities['Memorys'] ;
+      log.info(`Memorys: `);
       const entries = [{
         rss: memoryUsage.rss,
         heapTotal: memoryUsage.heapTotal,
@@ -70,6 +72,7 @@ export class Monitoring {
       // if (this.memoryInfo.length > 50) this.memoryInfo.splice(0, 1);
     } catch (ex: any) {
       log.error(JSON.stringify(ex, null, 2));
+      // log.error(JSON.stringify(serializeError(ex), null, 2));
       console.log(ex.message)
       tx.rollback(ex);
     }
@@ -91,6 +94,7 @@ export class Monitoring {
       return await monitoringService.run(query);
     } catch (ex: any) {
       log.error(JSON.stringify(ex, null, 2));
+      // log.error(JSON.stringify(serializeError(ex), null, 2));
       console.log(ex.message)
     }
   }

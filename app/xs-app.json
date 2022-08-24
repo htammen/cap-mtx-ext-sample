@@ -3,6 +3,13 @@
     "authenticationMethod": "route",
     "routes": [
         {
+            "source": "^/reuse/catalog/(.*)$",
+            "authenticationType": "none",
+            "scope": "$XSAPPNAME.Viewer",
+            "destination": "srv"
+        }
+        ,
+        {
             "source": "^/catalog/(.*)$",
             "authenticationType": "xsuaa",
             "scope": "$XSAPPNAME.Viewer",
@@ -28,6 +35,13 @@
             "target": "$1",
             "authenticationType": "none",
             "destination": "srv"
+        }
+        ,
+        {
+            "source": "^/reuse/(.*)$",
+            "authenticationType": "none",
+            "scope": "$XSAPPNAME.Viewer",
+            "localDir": "resources"
         }
         ,
         {

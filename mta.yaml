@@ -1,5 +1,5 @@
 _schema-version: '3.2'
-ID: app1
+ID: cap-papm-cap
 version: 0.0.1
 
 parameters:
@@ -84,13 +84,13 @@ resources:
     type: org.cloudfoundry.managed-service
     parameters:
       service: xsuaa
-      service-plan: application
+      service-plan: broker
       path: ./xs-security.json
-      xsuaa-app: ${space}-~{app_api/application}
+      xsuaa-app: cap-papm-cap
       config:
-        xsappname: ${xsuaa-app}
+        xsappname: cap-papm-cap
     properties:
-      XSAPPNAME: ${xsuaa-app}
+      XSAPPNAME: cap-papm-cap
     requires:
       - name: app_api
 
@@ -118,7 +118,7 @@ resources:
                 User: <SetValueInCockpit>
                 Password: <SetValueInCockpit>
 
-  # --------------------- REGISTRY SERVICE ---------------------
+  # --------------------- REGISTRY SERVICE: Plan application ---------------------
   - name: app1-registry
   # ------------------------------------------------------------
     type: org.cloudfoundry.managed-service
@@ -131,13 +131,37 @@ resources:
       service: saas-registry
       service-plan: application
       config:
-        xsappname: ~{app1-uaa/XSAPPNAME}
-        appName: app1
+        xsappname: cap-papm-cap
+        appName: cap-papm-cap
         displayName: 'Basic CAP App (multitenancy)'
         description: 'Simple multitenancy Business Application'
         category: 'SaaS Multitenant Apps'
         appUrls:
           onSubscription: https://~{mtx-api/uri}/mtx/v1/provisioning/tenant/{tenantId}
+
+  # --------------------- REGISTRY SERVICE: Plan service ---------------------
+  - name: app1-registry-api
+  # ------------------------------------------------------------
+    type: org.cloudfoundry.managed-service
+    requires:
+      - name: app1-uaa
+      - name: mtx-api
+        properties:
+          prop: ~{uri}
+    parameters:
+      service: saas-registry
+      service-plan: service
+      config:
+        xsappname: cap-papm-cap
+        appName: cap-papm-cap-api
+        displayName: 'Basic CAP App (multitenancy) service'
+        description: 'Simple multitenancy Business Application as a Service'
+        category: 'SaaS Multitenant Apps'
+        appUrls:
+          onSubscription: https://~{mtx-api/uri}/mtx/v1/provisioning/tenant/{tenantId}
+          getDependencies : https://~{mtx-api/uri}/mtx/v1/provisioning/dependencies
+          onSubscriptionAsync: false
+          onUnSubscriptionAsync: false
 
   # ------------------- SERVICE MANAGER SERVICE ----------------
   - name: app1-sm
