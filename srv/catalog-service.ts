@@ -230,7 +230,7 @@ export class CatalogService extends cds.ApplicationService {
 
   async onRestartApp(req: Request) {
     log.info("Calling restartApp action");
-    await cfcommands.restartApp("app1-srv");
+    await cfcommands.restartApp("cap-papm-cap-srv");
     log.info("Finished restartApp action");
   }
 

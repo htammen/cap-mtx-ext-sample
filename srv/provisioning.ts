@@ -16,12 +16,12 @@ const core = require('@sap-cloud-sdk/core');
 async function getCFInfo(appname: string) {
     try {
         // get app GUID
-        let res1 = await core.executeHttpRequest({ destinationName: 'app1-cfapi'}, {
+        let res1 = await core.executeHttpRequest({ destinationName: 'cap-papm-cap-cfapi'}, {
             method: 'GET',
             url: '/v3/apps?organization_guids=' + appEnv.app.organization_id + '&space_guids=' + appEnv.app.space_id + '&names=' + appname
         });
         // get domain GUID
-        let res2 = await core.executeHttpRequest({ destinationName: 'app1-cfapi'}, {
+        let res2 = await core.executeHttpRequest({ destinationName: 'cap-papm-cap-cfapi'}, {
             method: 'GET',
             url: '/v3/domains?names=' + /\.(.*)/gm.exec(appEnv.app.application_uris[0])![1]
         });
@@ -41,7 +41,7 @@ async function createRoute(tenantHost: string, appname: string) {
         async function (CFInfo) {
             try {
                 // create route
-                let res1 = await core.executeHttpRequest({ destinationName: 'app1-cfapi'}, {
+                let res1 = await core.executeHttpRequest({ destinationName: 'cap-papm-cap-cfapi'}, {
                     method: 'POST',
                     url: '/v3/routes',
                     data: {
@@ -61,7 +61,7 @@ async function createRoute(tenantHost: string, appname: string) {
                     },
                 });
                 // map route to app
-                let res2 = await core.executeHttpRequest({ destinationName: 'app1-cfapi'}, {
+                let res2 = await core.executeHttpRequest({ destinationName: 'cap-papm-cap-cfapi'}, {
                     method: 'POST',
                     url: '/v3/routes/' + res1.data.guid + '/destinations',
                     data: {
@@ -90,14 +90,14 @@ async function deleteRoute(tenantHost: string, appname: string) {
         async function (CFInfo) {
             try {
                 // get route id
-                let res1 = await core.executeHttpRequest({ destinationName: 'app1-cfapi'}, {
+                let res1 = await core.executeHttpRequest({ destinationName: 'cap-papm-cap-cfapi'}, {
                     method: 'GET',
                     url: '/v3/apps/' + CFInfo.app_id + '/routes?hosts=' + tenantHost
                 });
                 if (res1.data.pagination.total_results === 1) {
                     try {
                         // delete route
-                        let res2 = await core.executeHttpRequest({ destinationName: 'app1-cfapi'}, {
+                        let res2 = await core.executeHttpRequest({ destinationName: 'cap-papm-cap-cfapi'}, {
                             method: 'DELETE',
                             url: '/v3/routes/' + res1.data.resources[0].guid
                         });

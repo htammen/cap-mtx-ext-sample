@@ -1,5 +1,5 @@
 {
-  "name": "app1",
+  "name": "cap-papm-cap",
   "version": "0.2.1",
   "repository": "<Add your repository here>",
   "license": "UNLICENSED",
@@ -39,9 +39,9 @@
     "start": "cds run",
     "start_with_server": "CDS_ENV=production cds-ts run",
     "start_local_ui": "echo 'Starting UI locally' && cd ./app && node custom.js",
-    "build": "rm mta_archives/* && tsc && mbt build",
+    "build": "rm -f mta_archives/* && tsc && mbt build",
     "deploy": "cf deploy ./mta_archives/cap-papm-cap_0.0.1.mtar",
-    "upd-defenv": "cf de app1-srv"
+    "upd-defenv": "cf de cap-papm-cap-srv"
   },
   "eslintConfig": {
     "extends": "eslint:recommended",
