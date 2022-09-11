@@ -152,7 +152,6 @@ resources:
     parameters:
       service: saas-registry
       service-plan: service
-      tags: ['SaaS-service']
       config:
         xsappname: cap-papm-cap
         appName: cap-papm-cap-api
