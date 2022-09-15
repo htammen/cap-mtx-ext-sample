@@ -165,4 +165,21 @@ export = (service: Service) => {
         console.log('UpgradeTenant: ', req.data.subscribedTenantId, req.data.subscribedSubdomain, instanceData, deploymentOptions);
     });
 
+    service.on('dependencies', (req, next) => {
+      const dependencies = [];
+      //@ts-ignore
+      const services = xsenv.readServices();
+      const arrServices = Object.values(services);
+
+      for(const service of arrServices) {
+        //@ts-ignore
+        const xsappname = service.credentials.uaa ? service.credentials.uaa.xsappname : service.credentials.xsappname;
+        if(xsappname) {
+          dependencies.push({'xsappname': xsappname});
+        }
+      }
+
+      log.info(`Dependencies of app cap-papm-cap: ${JSON.stringify(dependencies)}`);
+      return dependencies;
+    });
 }

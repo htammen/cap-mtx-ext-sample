@@ -184,6 +184,12 @@
           "kind": "service"
         }
       ]
+    },
+    "log": {
+      "levels": {
+        "app": "trace",
+        "cds": "trace"
+      }
     }
   }
 }
