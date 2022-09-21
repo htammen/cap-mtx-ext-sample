@@ -34,6 +34,7 @@ modules:
       - name: cap-papm-cap-uaa
       - name: cap-papm-cap-dest
       - name: cap-papm-cap-logging
+      - name: cap-papm-cap-registry
       - name: cap-papm-cap-registry-api
       - name: cap-papm-cap-sm
     provides:
