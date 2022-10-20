@@ -1,0 +1,94 @@
+# Authentication
+# joe: = am9lOg==
+# ives: = eXZlczo=
+# carol: = Y2Fyb2w6
+# erin: = ZXJpbjo=
+
+###
+GET http://localhost:4004/catalog/
+Authorization: Basic Y2Fyb2w6
+
+###
+GET http://localhost:4004/catalog/$metadata
+Authorization: Basic Y2Fyb2w6
+
+###
+# Carol t1
+# Get sales data from tenant 1
+GET http://localhost:4004/catalog/Sales
+Authorization: Basic Y2Fyb2w6
+
+###
+# erin t2
+# Get sales data from tenant 2
+GET http://localhost:4004/catalog/Sales
+Authorization: Basic ZXJpbjo=
+
+###
+# Carol t1 boost
+# Boost amount of sales data in tenant 1
+POST http://localhost:4004/catalog/Sales(1)/CatalogService.boost
+Authorization: Basic Y2Fyb2w6
+Content-Type: application/json
+
+{}
+
+###
+# erin t1 boost
+# Boost amount of sales data in tenant 2
+POST http://localhost:4004/catalog/Sales(1)/CatalogService.boost
+Authorization: Basic ZXJpbjo=
+Content-Type: application/json
+
+{}
+###
+GET http://localhost:4004/catalog/Sales?$apply=filter(amount%20gt%20500)/groupby((region),aggregate($count%20as%20nrCountries))
+Authorization: Basic am9lOg==
+###
+GET http://localhost:4004/catalog/topSales(amount=700)
+Authorization: Basic am9lOg==
+###
+GET http://localhost:4004/catalog/VSales
+Authorization: Basic Y2Fyb2w6
+###
+GET http://localhost:4004/catalog/SessionInfo
+Authorization: Basic Y2Fyb2w6
+###
+# User info joe
+GET http://localhost:4004/catalog/userInfo()
+Authorization: Basic am9lOg==
+###
+# User info Carol
+GET http://localhost:4004/catalog/userInfo()
+Authorization: Basic Y2Fyb2w6
+
+###
+# Subscribe to tenannt 1
+POST http://localhost:4004/-/cds/deployment/subscribe HTTP/1.1
+Content-Type: application/json
+Authorization: Basic eXZlczo=
+
+{ "tenant": "t1" }
+
+###
+# Subscribe to tenannt 2
+POST http://localhost:4004/-/cds/deployment/subscribe HTTP/1.1
+Content-Type: application/json
+Authorization: Basic eXZlczo=
+
+{ "tenant": "t2" }
+
+###
+# get tenant info
+# does not work yet ???
+GET http://localhost:4004/-/cds/saas-provisioning/tenant/t1 HTTP/1.1
+Content-Type: application/json
+Authorization: Basic eXZlczo=
+
+###
+# get infos of all tenants
+# does not work yet ???
+POST http://localhost:4004/-/cds/saas-provisioning/tenant HTTP/1.1
+Content-Type: application/json
+Authorization: Basic eXZlczo=
+
