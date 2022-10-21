@@ -1,4 +1,5 @@
 const cds = require('@sap/cds');
+const LOG = cds.log('app1')
 
 cds.on('bootstrap', app => {
     // cds.mtx.in(app).then(async () => {
@@ -10,12 +11,15 @@ cds.on('bootstrap', app => {
 });
 
 cds.on('served', async () => {
+  debugger
   const { 'cds.xt.SaasProvisioningService': provisioning } = cds.services
   const { 'cds.xt.DeploymentService': deployment } = cds.services
   const { 'cds.xt.ModelProviderService': modelProvider } = cds.services
 
-  provisioning.impl(require('./provisioning'));
-  modelProvider.impl(require('./modelservice'));
+  provisioning?.impl(require('./provisioning'));
+  LOG._debug && LOG.debug('service provisioning instance created', provisioning ? 'yes': 'no'); 
+  modelProvider?.impl(require('./modelservice'));
+  LOG._debug && LOG.debug('service modelProvider instance created', modelProvider ? 'yes': 'no'); 
 
   // provisioning.prepend(() => {
   //   provisioning.on('UPDATE', 'tenant', async (req, next) => { ... })

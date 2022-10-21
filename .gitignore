@@ -26,3 +26,5 @@ _out
 
 srv/src/monitoring.js
 srv/monitoring-service.js
+default-env.json.freetier
+default-env.json.nexontis

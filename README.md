@@ -157,7 +157,7 @@ Additionally you have to do the following tasks
 
 ###### Adjust app environment for ui app
 
-To be able to work with a tenant environment you have to edit the downloaded environment config.
+To be able to work within a tenant environment you have to edit the downloaded environment config.
 
 - Open `default-env.json` in an editor
 - At the end add the following lines (overwrite the existing `destinations` entry.
@@ -170,7 +170,9 @@ To be able to work with a tenant environment you have to edit the downloaded env
 
 ##### Start the srv app
 
-- `npm run debug` or `npm run start_with_server` (the latter is without degugging)
+- `npm run debug` or 
+- `npm run start_with_server` (the latter is without degugging) or
+- `npm run debug:hybrid:freetier` if you have a file `default-env.json.freetier`
 
 If you want to debug the app open a (chromium) browser and enter the url `chrome://inspect`. 
 Then choose **Open dedicated DevTools for Node**. You are now in the debugger and set breakpoints.

@@ -35,6 +35,7 @@
   ],
   "scripts": {
     "debug": "tsc && run(){ CDS_ENV=production node --inspect ./node_modules/@sap/cds/bin/cds.js run; }; run",
+    "debug:hybrid:freetier": "cp -f default-env.json.freetier default-env.json && tsc && run(){ DEBUG=mtx CDS_ENV=production node --inspect-brk ./node_modules/@sap/cds/bin/cds.js run; }; run",
     "debug:local": "tsc && run(){ DEBUG=mtx CDS_ENV=development node --inspect ./node_modules/@sap/cds/bin/cds.js run; }; run",
     "start": "cds run",
     "start_with_server": "CDS_ENV=production cds-ts run",
@@ -69,45 +70,11 @@
     }
   },
   "cds": {
-    "build": {
-      "target": "gen",
-      "tasks": [
-        {
-          "for": "hana",
-          "src": "db",
-          "options": {
-            "model": [
-              "db",
-              "app",
-              "srv"
-            ]
-          }
-        },
-        {
-          "for": "node-cf",
-          "src": "srv",
-          "options": {
-            "model": [
-              "db",
-              "app",
-              "srv"
-            ]
-          }
-        },
-        {
-          "for": "mtx",
-          "src": ".",
-          "dest": "srv",
-          "options": {
-            "model": [
-              "db",
-              "app",
-              "srv",
-              "."
-            ]
-          }
-        }
-      ]
+    "log": {
+      "levels": {
+        "app1": "debug",
+        "mtx": "debug"
+      }
     },
     "requires": {
       "uaa": {
@@ -163,36 +130,31 @@
         }
       },
       "multitenancy": true,
-      "extensibility": true
-    },
-    "mtx": {
-      "api": {
-        "provisioning": true,
-        "metadata": true,
-        "model": true
-      },
-      "element-prefix": [
-        "Z_",
-        "ZZ_"
-      ],
-      "namespace-blocklist": [
-        "com.sap.",
-        "sap.",
-        "app1."
-      ],
-      "extension-allowlist": [
-        {
-          "for": [
-            "app1.db.Sales"
-          ]
-        },
-        {
-          "for": [
-            "CatalogService"
-          ],
-          "kind": "service"
-        }
-      ]
+      "extensibility": true,
+      "cds.xt.ExtensibilityService": {
+        "element-prefix": [
+          "Z_",
+          "ZZ_"
+        ],
+        "namespace-blocklist": [
+          "com.sap.",
+          "sap.",
+          "app1."
+        ],
+        "extension-allowlist": [
+          {
+            "for": [
+              "app1.db.Sales"
+            ]
+          },
+          {
+            "for": [
+              "CatalogService"
+            ],
+            "kind": "service"
+          }
+        ]
+      }
     }
   }
 }
