@@ -137,8 +137,8 @@ resources:
         description: 'Simple multitenancy Business Application'
         category: 'SaaS Multitenant Apps'
         appUrls:
-          onSubscription: https://~{mtx-api/uri}-/cds/saas-provisioning/tenant/{tenantId}
-          getDependencies : https://~{mtx-api/uri}-/cds/saas-provisioning/dependencies
+          onSubscription: https://~{mtx-api/uri}/-/cds/saas-provisioning/tenant/{tenantId}
+          getDependencies : https://~{mtx-api/uri}/-/cds/saas-provisioning/dependencies
 
   # ------------------- SERVICE MANAGER SERVICE ----------------
   - name: app1-sm

@@ -8,9 +8,10 @@
   - [Build and Deploy the app](#build-and-deploy-the-app)
   - [Configuring and running the app](#configuring-and-running-the-app)
     - [Configuration](#configuration)
-      - [Configuring destination](#configuring-destination)
+      - [~~Configuring destination~~](#configuring-destination)
     - [Running the app](#running-the-app)
       - [Running on BTP](#running-on-btp)
+        - [Create a route](#create-a-route)
         - [Assign role collections to users](#assign-role-collections-to-users)
         - [Debug on BTP](#debug-on-btp)
       - [Running on local PC (debugging)](#running-on-local-pc-debugging)
@@ -27,7 +28,7 @@
     - [HTML5](#html5)
   - [Business logic](#business-logic)
     - [Business logic in CatalogService](#business-logic-in-catalogservice)
-  - [Internals of mtx with CAP](#internals-of-mtx-with-cap)
+  - [~~Internals of mtx with CAP~~ to be updated to mtxs](#internals-of-mtx-with-cap-to-be-updated-to-mtxs)
     - [Upgrade Base Model](#upgrade-base-model)
   - [Troubleshooting / Hints](#troubleshooting--hints)
     - [~~Metadata not updated after redeployment of app~~](#metadata-not-updated-after-redeployment-of-app)
@@ -38,7 +39,7 @@
 # app1 - Basic CAP App (multitenancy)
 > Simple multitenancy Business Application
 
-This project demonstrates the possibilities of CAP Extensibility in a multitenant environment (mtx).  
+This project demonstrates the possibilities of CAP Extensibility in a streamlined multitenant environment (mtxs).  
 Each tenant can extend the db and service layers of a SaaS application. All or some extensions can also be deleted later.  
 The extensions are not hard coded but can be added at runtime of the app.
 
@@ -49,7 +50,7 @@ So they need to be installed as global packages.
 
 ## Just run the app
 
-The current version of the app is available at [BTP](https://hx2lrw77df7sk40dc2-dev-app1.cfapps.eu20.hana.ondemand.com/).  
+The current version of the app is available at [BTP](https://cons-4-csdnu540-dev.cfapps.eu20.hana.ondemand.com/).  
 Just login with any user of the global SAP IdP. *If it's not running I (Helmut) haven't started the HANA database of my free tier account that day. 
 In that case <a href="mailto:helmut.tammen.ext@nexontis.com">contact</a> me or run it in your BTP account like described below.
 
@@ -77,21 +78,21 @@ Before the app can be used you have to configure it.
 
 ### Configuration 
 
-#### Configuring destination
+#### ~~Configuring destination~~
 
-The srv app uses the cloud foundry api for creating the tenant routes, when restarting the app and ...  
-The access to this api is implemented via the destination service **app1-dest**.  
+~~The srv app uses the cloud foundry api for creating the tenant routes, when restarting the app and ...  
+The access to this api is implemented via the destination service **app1-dest**.~~  
 
-To configure this destination goto the subaccount and space where your app is deployed. Under **instances** find the instance **app1-dest**. 
-Click on the destination to get to the dashboard. Under **destinations** click on **app1-cfapi**. Edit this destination.
+~~To configure this destination goto the subaccount and space where your app is deployed. Under **instances** find the instance **app1-dest**. 
+Click on the destination to get to the dashboard. Under **destinations** click on **app1-cfapi**. Edit this destination.~~
 
-- Enter a user (e-mail) and password who has the privilege to run cf commands (probably your user).
-- _Necessary Hack_
+~~- Enter a user (e-mail) and password who has the privilege to run cf commands (probably your user).~~
+~~- _Necessary Hack_
     - enter any character into the `Client Secret` (otherwise you can't save)
     - Press **Save**
     - **Edit** the destination once again
     - Delete the character from the field `Client Secret`
-    - Press **Save** again.
+    - Press **Save** again.~~
 
 ### Running the app
 
@@ -99,8 +100,15 @@ Click on the destination to get to the dashboard. Under **destinations** click o
 
 To run the app on BTP you just have to create a subaccount and create a subscription for the app **Basic CAP app (multitenancy) - app1**.
 
-The tenant route for your subaccount tenant should have been created automatically during the subscription process. If it is not available please
-create it in your provider subaccount manually.
+~~The tenant route for your subaccount tenant should have been created automatically during the subscription process. If it is not available please
+create it in your provider subaccount manually.~~
+
+##### Create a route 
+- In BTP cockpit goto the subaccount you just created and note the subdomain.
+- Goto the space in your provider subaccount 
+- Create a new route there 
+  - domain: select the domain. It's something like cfapps.eu20.hana.ondemand.com
+  - hostname: name it `<subdomain of tenant>.dev-app1`
 
 ##### Assign role collections to users
 
@@ -114,7 +122,7 @@ These roles are exposed via the role collections
 - app1_Extension_Developer
 - app1_Extension_Developer_Delete
 
-Hence assign these role collections to your user or any user who should work with the application.
+Hence assign these role collections in the tenant subaccount to your user or any user who should work with the application.
 
 ##### Debug on BTP
 
@@ -316,7 +324,7 @@ in the chain. See [ModelService.ts](./srv/modelservice.ts) for details.
 
 For the UpgradeBaseModelAPI action I chose to use the API. The implementation is realized in [mtxapis.ts](./srv/mtxapis.ts).
 
-## Internals of mtx with CAP
+## ~~Internals of mtx with CAP~~ to be updated to mtxs
 
 When using mtx with CAP two HDI containers are created for each tenant. 
 

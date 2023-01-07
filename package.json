@@ -10,8 +10,8 @@
   "dependencies": {
     "@sap-cloud-sdk/core": "^1.53",
     "@sap/audit-logging": "^5",
-    "@sap/cds": "^6",
-    "@sap/cds-mtxs": "^1.2.0",
+    "@sap/cds": "^6.4",
+    "@sap/cds-mtxs": "^1.4",
     "@sap/xsenv": "^3",
     "@sap/xssec": "^3",
     "axios": "^0.27.2",
@@ -40,7 +40,7 @@
     "start": "cds run",
     "start_with_server": "CDS_ENV=production cds-ts run",
     "start_local_ui": "echo 'Starting UI locally' && cd ./app && node custom.js",
-    "build": "tsc && mbt build",
+    "build": "npm i && tsc && mbt build",
     "deploy": "cf deploy ./mta_archives/app1_0.0.1.mtar",
     "upd-defenv": "cf de app1-srv"
   },

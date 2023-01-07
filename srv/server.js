@@ -16,10 +16,10 @@ cds.on('served', async () => {
   const { 'cds.xt.DeploymentService': deployment } = cds.services
   const { 'cds.xt.ModelProviderService': modelProvider } = cds.services
 
-  provisioning?.impl(require('./provisioning'));
-  LOG._debug && LOG.debug('service provisioning instance created', provisioning ? 'yes': 'no'); 
-  modelProvider?.impl(require('./modelservice'));
-  LOG._debug && LOG.debug('service modelProvider instance created', modelProvider ? 'yes': 'no'); 
+  // provisioning?.impl(require('./provisioning'));
+  // LOG._debug && LOG.debug('service provisioning instance created', provisioning ? 'yes': 'no'); 
+  // modelProvider?.impl(require('./modelservice'));
+  // LOG._debug && LOG.debug('service modelProvider instance created', modelProvider ? 'yes': 'no'); 
 
   // provisioning.prepend(() => {
   //   provisioning.on('UPDATE', 'tenant', async (req, next) => { ... })
