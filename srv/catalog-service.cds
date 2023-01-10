@@ -50,7 +50,7 @@ service CatalogService @(path : '/catalog')
       returns many Sales;
 
 
-    type userScopes { identified: Boolean; authenticated: Boolean; Viewer: Boolean; Admin: Boolean; ExtendCDS: Boolean; ExtendCDSdelete: Boolean;};
+    type userScopes { identified: Boolean; authenticated: Boolean; Viewer: Boolean; Admin: Boolean; ExtensionDeveloper: Boolean};
     type userType { user: String; locale: String; tenant: String; scopes: userScopes; authorization: String};
     function userInfo() returns userType;
 

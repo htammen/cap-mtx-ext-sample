@@ -29,15 +29,10 @@
         {
             "name": "$XSAPPNAME.Admin",
             "description": "Administrator"
-        }
-        ,
-        {
-            "name": "$XSAPPNAME.ExtendCDS",
-            "description": "Create Extensions"
         },
         {
-            "name": "$XSAPPNAME.ExtendCDSdelete",
-            "description": "Delete Extensions"
+            "name": "$XSAPPNAME.cds.ExtensionDeveloper",
+            "description": "Extension Developer"
         }
     ],
     "role-templates": [
@@ -74,17 +69,10 @@
             ]
         },
         {
-            "name": "ExtendCDS",
+            "name": "ExtensionDev",
             "description": "Extension Developer",
             "scope-references": [
-                "$XSAPPNAME.ExtendCDS"
-            ]
-        },
-        {
-            "name": "ExtendCDSdelete",
-            "description": "Extension Developer - Delete",
-            "scope-references": [
-                "$XSAPPNAME.ExtendCDSdelete"
+                "$XSAPPNAME.cds.ExtensionDeveloper"
             ]
         }
     ]
@@ -116,14 +104,7 @@
             "name": "app1_Extension_Developer",
             "description": "Extension Development access",
             "role-template-references": [
-                "$XSAPPNAME.ExtendCDS"
-            ]
-        },
-        {
-            "name": "app1_Extension_Developer_Delete",
-            "description": "Extension Development Delete access",
-            "role-template-references": [
-                "$XSAPPNAME.ExtendCDSdelete"
+                "$XSAPPNAME.ExtensionDev"
             ]
         }
     ]

@@ -6,7 +6,8 @@
             "source": "^/catalog/(.*)$",
             "authenticationType": "xsuaa",
             "scope": "$XSAPPNAME.Viewer",
-            "destination": "srv"
+            "destination": "srv",
+            "cacheControl": "no-cache, no-store, must-revalidate"
         }
         ,
         {
@@ -26,7 +27,7 @@
         {
             "source": "^/mtx/(.*)",
             "target": "$1",
-            "authenticationType": "xsuaa",
+            "authenticationType": "none",
             "destination": "srv"
         }
         ,
@@ -34,7 +35,8 @@
             "source": "^/(.*)$",
             "authenticationType": "xsuaa",
             "scope": "$XSAPPNAME.Viewer",
-            "localDir": "resources"
+            "localDir": "resources",
+            "cacheControl": "no-cache"
         }
     ]
 }

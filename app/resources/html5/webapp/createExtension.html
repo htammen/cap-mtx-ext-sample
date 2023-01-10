@@ -15,39 +15,48 @@ extend entity db.Sales with {
     Z_helmut1 : String(15);
     Z_helmut2 : Integer;
 };
-`;
-        this.document.getElementById("sFname1").value = "db/Sales.cds";
-        this.document.getElementById("sCode2").value = `namespace Z_app1.db;
 
 entity Z_Custom {
     key ID          : Integer;
         description : String(100);
 };
+
 `;
-        this.document.getElementById("sFname2").value = "db/new.cds";
-        this.document.getElementById("sCode3").value = `using CatalogService from '_base/srv/catalog-service'; 
 
-using Z_app1.db as db from '../db/new'; 
+        <!-- this.document.getElementById("sFname1").value = "db/Sales.cds"; -->
+        <!-- this.document.getElementById("sCode2").value = `namespace Z_app1.db; -->
 
-extend service CatalogService with {
+<!-- entity Z_Custom { -->
+  <!-- key ID          : Integer; -->
+  <!-- description : String(100); -->
+<!-- ; -->
+<!-- ` -->
+        <!-- this.document.getElementById("sFname2").value = "db/new.cds"; -2-> -->
+        <!-- this.document.getElementById("sCode3").value = `using CatalogService from '_base/srv/catalog-service'; --> 
 
-    @readonly
-    entity Z_Custom
-      @(restrict: [{ to: 'Viewer' }])
-      as select * from db.Z_Custom;
+<!-- using Z_app1.db as db from '../db/new'; --> 
 
-};
-`;
-        this.document.getElementById("sFname3").value = "srv/extensions.cds";
+<!-- extend service CatalogService with { --> 
+
+    <!-- @readonly --> 
+    <!-- entity Z_Custom --> 
+      <!-- @(restrict: [{ to: 'Viewer' }]) --> 
+       <!-- as select * from db.Z_Custom; --> 
+
+<!-- ; --> 
+<!-- `; -->
+       <!-- this.document.getElementById("sFname3").value = "srv/extensions.cds"; --> 
       }
       
       function sendRequest(evt) {
               this.document.getElementById("result").innerHTML = "Be a little bit patient. The data has been sent to the server.\nAs soon as the server has finished you will see the results here";
-              var sFname = this.document.getElementById("sFname1").value;
+              <!-- var sFname = this.document.getElementById("sFname1").value; -->
               var sCode = this.document.getElementById("sCode1").value;
               let aSnippets = [];
-              for(let i=0; i<3; i++) {
-                      const sFname = this.document.getElementById(`sFname${i+1}`).value;
+              // in mtx we had 3 chunks of data, in mtxs we only have one
+              for(let i=0; i<1; i++) {
+                      <!-- const sFname = this.document.getElementById(`sFname${i+1}`).value; -->
+                      const sFname = "testtesttest";
                       const sCode = this.document.getElementById(`sCode${i+1}`).value;
                       if(sFname && sFname.trim().length > 0) {
                         aSnippets.push({
@@ -90,24 +99,25 @@ extend service CatalogService with {
     <h2>Enter the code of your extension(s)</h2>
     <h3>Code</h3>
     <form>
-        Filename 1:<br>
-        <input id="sFname1" type="text" name="filename1"></input>
-        <br/> Code:
+        <!-- Filename 1:<br> -->
+        <!-- <input id="sFname1" type="text" name="filename1"></input> -->
+        <!-- <br/> --> 
+        Code:
         <br/>
-        <textarea id="sCode1" cols="50" rows="10" name="code1"></textarea>
+        <textarea id="sCode1" cols="80" rows="40" name="code1"></textarea>
         <br/>
-        Filename 2:<br>
-        <input id="sFname2" type="text" name="filename2"></input>
-        <br/> Code:
-        <br/>
-        <textarea id="sCode2" cols="50" rows="10" name="code2"></textarea>
-        <br/>
-        Filename 3:<br>
-        <input id="sFname3" type="text" name="filename3"></input>
-        <br/> Code:
-        <br/>
-        <textarea id="sCode3" cols="50" rows="10" name="code3"></textarea>
-        <br/>
+        <!-- Filename 2:<br> -->
+        <!-- <input id="sFname2" type="text" name="filename2"></input> -->
+        <!-- <br/> Code: -->
+        <!-- <br/> -->
+        <!-- <textarea id="sCode2" cols="50" rows="10" name="code2"></textarea> -->
+        <!-- <br/> -->
+        <!-- Filename 3:<br> -->
+        <!-- <input id="sFname3" type="text" name="filename3"></input> -->
+        <!-- <br/> Code: -->
+        <!-- <br/> -->
+        <!-- <textarea id="sCode3" cols="50" rows="10" name="code3"></textarea> -->
+        <!-- <br/> -->
         <button type="button" onClick='return sendRequest()'>Senden</button>
     </form>
     <div><pre id="result"></pre></div>

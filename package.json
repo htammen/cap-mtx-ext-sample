@@ -28,7 +28,8 @@
     "@types/cfenv": "^1.2.2",
     "@types/sap__xsenv": "^3",
     "prettier": "^2",
-    "sqlite3": "^5.0.2"
+    "sqlite3": "^5.0.2",
+    "zx": "^7.1.1"
   },
   "sapux": [
     "app/resources/fiori"
@@ -40,9 +41,10 @@
     "start": "cds run",
     "start_with_server": "CDS_ENV=production cds-ts run",
     "start_local_ui": "echo 'Starting UI locally' && cd ./app && node custom.js",
-    "build": "npm i && tsc && mbt build",
+    "build": "tsc && mbt build && npm i",
     "deploy": "cf deploy ./mta_archives/app1_0.0.1.mtar",
-    "upd-defenv": "cf de app1-srv"
+    "upd-defenv": "cf de app1-srv",
+    "make-default-env:sm": "npx zx make-default-env.mjs --sm"
   },
   "eslintConfig": {
     "extends": "eslint:recommended",

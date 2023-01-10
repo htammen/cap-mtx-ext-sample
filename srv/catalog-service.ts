@@ -94,8 +94,7 @@ export class CatalogService extends cds.ApplicationService {
     results.scopes.Viewer = req.user.is("Viewer");
     results.scopes.Admin = req.user.is("Admin");
     results.tenant = req.user.tenant;
-    results.scopes.ExtendCDS = req.user.is("ExtendCDS");
-    results.scopes.ExtendCDSdelete = req.user.is("ExtendCDSdelete");
+    results.scopes.ExtensionDeveloper = req.user.is("cds.ExtensionDeveloper");
     //@ts-ignore('later')
     results.authorization = req._.headers.authorization;
     // this.monitoring.addMemoryInfo("onUserInfo after", process.memoryUsage());
@@ -122,9 +121,17 @@ export class CatalogService extends cds.ApplicationService {
       extensions.push([oSnippet.sFilename, oSnippet.sCode]);
     }
     try {
-      const modelService = await cds.connect.to("ModelService");
+      const extensionService = cds.services["cds.xt.ExtensibilityService"];
+      req.tenant = req.user.tenant 
+      // const sExtensions = aSnippets.reduce((sStr:string, oSnippet: {sFilename: string, sCode: string}) => {
+      //   sStr += oSnippet.sCode
+      //   return sStr
+      // }, "")
+      
+      // Take the first snippet and add it to the tenant
+      const sExtensions = aSnippets[0].sCode
       // @ts-ignore('later')
-      await modelService.activate(req.user.tenant, extensions);
+      await extensionService.add(sExtensions, null, 'database', req.user.tenant );
       // the following emit worked in Günther's app so that a restart war not necessary
       // but it doesn't work here
       // @ts-ignore('later')
@@ -154,7 +161,7 @@ export class CatalogService extends cds.ApplicationService {
       const { files } = req.data;
 
       // action deactivate (tenant: String(200), extension: JSON_ARRAY);
-      const modelService = await cds.connect.to("ModelService");
+      const modelService = await cds.connect.to("cds.xt.ModelProviderService");
       // @ts-ignore('later')
       const apiResult = await modelService.deactivate(req.user.tenant, files);
       // the following emit worked in Günther's app so that a restart war not necessary
@@ -177,7 +184,7 @@ export class CatalogService extends cds.ApplicationService {
   async onResetTenant(req: Request) {
     log.info("Calling resetTenant action");
     try {
-      const modelService = await cds.connect.to("ModelService");
+      const modelService = await cds.connect.to("cds.xt.ModelProviderService");
       // @ts-ignore('later')
       await modelService.reset(req.user.tenant);
     } catch (err: any) {
@@ -193,7 +200,7 @@ export class CatalogService extends cds.ApplicationService {
     // just a copy of resetTenant.
     // action upgrade (tenants: Array of String(200), base: JSON, autoUndeploy: Boolean, advancedOptions: ADVANCED_OPTIONS) returns UPGRADE_RESULT;
     try {
-      const modelService = await cds.connect.to("ModelService");
+      const modelService = await cds.connect.to("cds.xt.ModelProviderService");
       // @ts-ignore('later')
       const apiResult = await modelService.upgrade([req.user.tenant]);
     } catch (err: any) {
@@ -260,7 +267,7 @@ export class CatalogService extends cds.ApplicationService {
   // srv.on('upgradeBaseModel', async (req) => {
   //   console.log('Calling upgradeBaseModel function');
   //   // just a copy of resetTenant.
-  //   const modelService = await cds.connect.to('ModelService');
+  //   const modelService = await cds.connect.to('ModelService");
   //   const tx = modelService.tx(req);
   //   try {
   //     const apiResult = await tx.reset(req.user.tenant);

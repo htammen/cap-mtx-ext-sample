@@ -11,7 +11,6 @@ cds.on('bootstrap', app => {
 });
 
 cds.on('served', async () => {
-  debugger
   const { 'cds.xt.SaasProvisioningService': provisioning } = cds.services
   const { 'cds.xt.DeploymentService': deployment } = cds.services
   const { 'cds.xt.ModelProviderService': modelProvider } = cds.services

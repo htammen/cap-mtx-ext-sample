@@ -169,9 +169,11 @@ To be able to work within a tenant environment you have to edit the downloaded e
 
 - Open `default-env.json` in an editor
 - At the end add the following lines (overwrite the existing `destinations` entry.
-    - "TENANT_HOST": "<your subaccount subdomain>-dev-app1.cfapps.<your region>.hana.ondemand.com",
-    - "EXTERNAL_REVERSE_PROXY": true,
-    - "destinations": "[ {\n  \"forwardAuthToken\" : true,\n  \"name\" : \"srv\",\n  \"timeout\" : 60000,\n  \"url\" : \"http://localhost:4004\"\n} ]"
+  ```
+    "TENANT_HOST": "<your subaccount subdomain>-dev-app1.cfapps.<your region>.hana.ondemand.com",
+    "EXTERNAL_REVERSE_PROXY": true,
+    "destinations": "[ {\n  \"forwardAuthToken\" : true,\n  \"name\" : \"srv\",\n  \"timeout\" : 60000,\n  \"url\" : \"http://localhost:4004\"\n} ]"
+  ```
 - Replace <your subaccount subdomain> with the subdomain of the tenant-subaccount you want to work with.
 - Replace <your region> with the region you are working in.
 - Save the file
