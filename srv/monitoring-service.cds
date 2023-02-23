@@ -1,4 +1,4 @@
-using {app1.db.monitoring as dbm} from '../db/monitoring-model';
+using {app_mtx.db.monitoring as dbm} from '../db/monitoring-model';
 
 service MonitoringService @(path : '/monitoring')
 @(requires: 'authenticated-user')

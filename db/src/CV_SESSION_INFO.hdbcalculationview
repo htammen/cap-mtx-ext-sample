@@ -4,20 +4,20 @@
 <localVariables/>
 <variableMappings/>
 <dataSources>
-  <DataSource id="APP1_DB_TF_SESSION_INFO" type="TABLE_FUNCTION">
-    <resourceUri>APP1_DB_TF_SESSION_INFO</resourceUri>
+  <DataSource id="APP_MTX_DB_TF_SESSION_INFO" type="TABLE_FUNCTION">
+    <resourceUri>APP_MTX_DB_TF_SESSION_INFO</resourceUri>
   </DataSource>
 </dataSources>
 <calculationViews/>
-<logicalModel id="APP1_DB_TF_SESSION_INFO">
+<logicalModel id="APP_MTX_DB_TF_SESSION_INFO">
   <attributes>
     <attribute id="ITEM" order="1" displayAttribute="false" attributeHierarchyActive="false">
       <descriptions defaultDescription="Item"/>
-      <keyMapping columnObjectName="APP1_DB_TF_SESSION_INFO" columnName="ITEM"/>
+      <keyMapping columnObjectName="APP_MTX_DB_TF_SESSION_INFO" columnName="ITEM"/>
     </attribute>
     <attribute id="VALUE" order="2" displayAttribute="false" attributeHierarchyActive="false">
       <descriptions defaultDescription="Value"/>
-      <keyMapping columnObjectName="APP1_DB_TF_SESSION_INFO" columnName="VALUE"/>
+      <keyMapping columnObjectName="APP_MTX_DB_TF_SESSION_INFO" columnName="VALUE"/>
     </attribute>
   </attributes>
   <calculatedAttributes/>

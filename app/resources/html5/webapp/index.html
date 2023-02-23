@@ -50,23 +50,22 @@
     <div class="hover-text"><a href="/catalog/VSales">Sales by Region</a>
       <span class="tooltip-text">Call a calculation view in the HANA database</span>
     </div>
+    <hr/>
     <div class="hover-text"><a href="/catalog/SessionInfo">Session Info</a>
       <span class="tooltip-text">See some info to the current HANA session</span>
     </div>
     <div class="hover-text"><a href="/catalog/userInfo()">User Info</a>
       <span class="tooltip-text">See some info to your logged in user (includes the access token)</span>
     </div>
+    <div class="hover-text"><a href="/catalog/clearMetadataCache()">Clear OData metadata cache</a>
+      <span class="tooltip-text">Clears CAPs OData metadata cache at server side</span>
+    </div>
+    <hr/>
     <div class="hover-text"><a href="./createExtension.html">Activate Extensions...</a>
       <span class="tooltip-text">Create extensions in the current tenant</span>
     </div>
     <div class="hover-text"><a href="./deactivateExtensions.html">Deactivate Extensions...</a>
       <span class="tooltip-text">Delete / deactivate extensions in the current tenant</span>
-    </div>
-    <div class="hover-text"><a href="./stressTest.html">Perform a stress test...</a>
-      <span class="tooltip-text">Sends an activate and deactivate extension request several times</span>
-    </div>
-    <div class="hover-text"><a href="./deleteMonitoringMemory.html">Delete memory monitoring data...</a>
-      <span class="tooltip-text">Deletes all memory monitoring data that was collected at (de)activation of extensions</span>
     </div>
     <div class="hover-text"><a href="./upgradeBaseModel.html">Upgrade Base Model...</a>
       <span class="tooltip-text">Upgrade the model of this tenant to the newest model of the provider tenant</span>
@@ -80,8 +79,18 @@
     <div class="hover-text"><a href="./restartApp.html">Restart Application...</a>
       <span class="tooltip-text">Restarts the app in the provider tenant via the CF API</span>
     </div>
-    <div class="hover-text"><a href="/catalog/clearMetadataCache()">Clear OData metadata cache</a>
-      <span class="tooltip-text">Clears CAPs OData metadata cache at server side</span>
+    <div class="hover-text"><a href="./readTenantMetadata.html">Read tenant metadata...</a>
+      <span class="tooltip-text">Reads the tenant specific metadata as csn</span>
+    </div>
+    <div class="hover-text"><a href="./insertZCustom2.html">Insert data in table ZCustom2 via Z_CatalogService</a>
+      <span class="tooltip-text">Inserts data into the extension table via the extension service</span>
+    </div>
+    <hr/>
+    <div class="hover-text"><a href="./stressTest.html">Perform a stress test...</a>
+      <span class="tooltip-text">Sends an activate and deactivate extension request several times</span>
+    </div>
+    <div class="hover-text"><a href="./deleteMonitoringMemory.html">Delete memory monitoring data...</a>
+      <span class="tooltip-text">Deletes all memory monitoring data that was collected at (de)activation of extensions</span>
     </div>
     <div class="hover-text"><a href="/monitoring/Memorys?orderby=createdAt%20desc">Get memory monitoring data</a>
       <span class="tooltip-text">Retrieves the memory monitoring data from nodejs backend as JSON</span>

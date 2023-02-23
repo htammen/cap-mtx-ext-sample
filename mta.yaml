@@ -1,5 +1,5 @@
 _schema-version: '3.2'
-ID: app1
+ID: app-mtx
 version: 0.0.1
 
 parameters:
@@ -17,7 +17,7 @@ build-parameters:
 modules:
 
   # --------------------- SERVER MODULE ------------------------
-  - name: app1-srv
+  - name: app-mtx-srv
   # ------------------------------------------------------------
     type: nodejs
     path: gen/srv
@@ -31,11 +31,11 @@ modules:
       memory: 512M
       disk-quota: 1024M
     requires:
-      - name: app1-uaa
-      - name: app1-dest
-      - name: app1-logging
-      - name: app1-registry
-      - name: app1-sm
+      - name: app-mtx-uaa
+      - name: app-mtx-dest
+      - name: app-mtx-logging
+      - name: app-mtx-registry
+      - name: app-mtx-sm
     provides:
       - name: srv-api
         properties:
@@ -45,7 +45,7 @@ modules:
           uri: ${default-uri}
 
   # ------------------ APP ROUTER MODULE -----------------------
-  - name: app1
+  - name: app-mtx
   # ------------------------------------------------------------
     type: approuter.nodejs
     path: app
@@ -61,7 +61,7 @@ modules:
     properties:
       TENANT_HOST_PATTERN: '^(.*)-${space}-${app-name}.${default-domain}'
     requires:
-      - name: app1-uaa
+      - name: app-mtx-uaa
       - name: srv-api
         group: destinations
         properties:
@@ -69,7 +69,7 @@ modules:
           url: ~{srv-url}
           timeout: 60000
           forwardAuthToken: true
-      - name: app1-logging
+      - name: app-mtx-logging
     provides:
       - name: app_api
         properties:
@@ -79,7 +79,7 @@ modules:
 
 resources:
   # ----------------------- UAA SERVICE ------------------------
-  - name: app1-uaa
+  - name: app-mtx-uaa
   # ------------------------------------------------------------
     type: org.cloudfoundry.managed-service
     parameters:
@@ -95,7 +95,7 @@ resources:
       - name: app_api
 
   # -------------------- DESTINATION SERVICE -------------------
-  - name: app1-dest
+  - name: app-mtx-dest
   # ------------------------------------------------------------
     type: org.cloudfoundry.managed-service
     parameters:
@@ -106,7 +106,7 @@ resources:
           instance:
             existing_destinations_policy: ignore
             destinations:
-              - Name: app1-cfapi
+              - Name: app-mtx-cfapi
                 Description: CF Cloud Controller API
                 URL: ${controller-url}
                 Type: HTTP
@@ -119,11 +119,11 @@ resources:
                 Password: <SetValueInCockpit>
 
   # --------------------- REGISTRY SERVICE ---------------------
-  - name: app1-registry
+  - name: app-mtx-registry
   # ------------------------------------------------------------
     type: org.cloudfoundry.managed-service
     requires:
-      - name: app1-uaa
+      - name: app-mtx-uaa
       - name: mtx-api
         properties:
           prop: ~{uri}
@@ -131,20 +131,20 @@ resources:
       service: saas-registry
       service-plan: application
       config:
-        xsappname: ~{app1-uaa/XSAPPNAME}
-        appName: app1
-        displayName: 'Basic CAP App (multitenancy)'
-        description: 'Simple multitenancy Business Application'
+        xsappname: ~{app-mtx-uaa/XSAPPNAME}
+        appName: app-mtx
+        displayName: 'Basic CAP App (multitenancy classic)'
+        description: 'Simple classic multitenancy Business Application'
         category: 'SaaS Multitenant Apps'
         appUrls:
           onSubscription: https://~{mtx-api/uri}/mtx/v1/provisioning/tenant/{tenantId}
 
   # ------------------- SERVICE MANAGER SERVICE ----------------
-  - name: app1-sm
+  - name: app-mtx-sm
   # ------------------------------------------------------------
     type: org.cloudfoundry.managed-service
     requires:
-     - name: app1-uaa
+     - name: app-mtx-uaa
     parameters:
        service: service-manager
        service-plan: container
@@ -154,7 +154,7 @@ resources:
          polling_timeout_seconds: 480
 
   # ---------------- APPLICATION LOGGING SERVICE ---------------
-  - name: app1-logging
+  - name: app-mtx-logging
   # ------------------------------------------------------------
     type: org.cloudfoundry.managed-service
     parameters:

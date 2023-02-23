@@ -1,5 +1,5 @@
 {
-  "name": "app1",
+  "name": "app-mtx",
   "version": "0.2.1",
   "repository": "<Add your repository here>",
   "license": "UNLICENSED",
@@ -10,7 +10,7 @@
   "dependencies": {
     "@sap-cloud-sdk/core": "^1.53",
     "@sap/audit-logging": "^5",
-    "@sap/cds": "^5",
+    "@sap/cds": "^6",
     "@sap/cds-mtx": "^2",
     "@sap/xsenv": "^3",
     "@sap/xssec": "^3",
@@ -26,21 +26,21 @@
     "@sap/ux-specification": "^1.96.4",
     "@tsconfig/node18": "^1.0.1",
     "@types/cfenv": "^1.2.2",
-    "@types/sap__xsenv": "^2.0.3",
-    "prettier": "2.6.2",
+    "@types/sap__xsenv": "^3",
+    "prettier": "^2",
     "sqlite3": "^5.0.2"
   },
   "sapux": [
     "app/resources/fiori"
   ],
   "scripts": {
-    "debug": "tsc && run(){ CDS_ENV=production node --inspect ./node_modules/@sap/cds/bin/cds.js run; }; run",
-    "start": "cds run",
-    "start_with_server": "CDS_ENV=production cds-ts run",
+    "debug": "tsc && run(){ CDS_ENV=hybrid node --inspect ./node_modules/@sap/cds/bin/cds.js run; }; run",
+    "start": "run(){ node ./node_modules/@sap/cds/bin/cds.js run; }; run",
+    "start_with_server": "CDS_ENV=hybrid cds-ts run",
     "start_local_ui": "echo 'Starting UI locally' && cd ./app && node custom.js",
-    "build": "tsc && mbt build",
-    "deploy": "cf deploy ./mta_archives/app1_0.0.1.mtar",
-    "upd-defenv": "cf de app1-srv"
+    "build": "tsc && mbt build && npm install",
+    "deploy": "cf deploy ./mta_archives/app-mtx_0.0.1.mtar",
+    "upd-defenv": "cf de app-mtx-srv"
   },
   "eslintConfig": {
     "extends": "eslint:recommended",
@@ -116,6 +116,9 @@
         "[production]": {
           "strategy": "JWT"
         },
+        "[hybrid]": {
+          "strategy": "JWT"
+        },
         "[development]": {
           "strategy": "JWT",
           "users": {
@@ -142,6 +145,9 @@
         "[production]": {
           "kind": "hana-cloud"
         },
+        "[hybrid]": {
+          "kind": "hana-cloud"
+        },
         "[development]": {
           "kind": "sql"
         },
@@ -162,18 +168,18 @@
         "model": true
       },
       "element-prefix": [
-        "Z_",
-        "ZZ_"
+        "Z",
+        "ZZ"
       ],
       "namespace-blocklist": [
         "com.sap.",
         "sap.",
-        "app1."
+        "app_mtx."
       ],
       "extension-allowlist": [
         {
           "for": [
-            "app1.db.Sales"
+            "app_mtx"
           ]
         },
         {
@@ -183,6 +189,17 @@
           "kind": "service"
         }
       ]
+    },
+    "log": {
+        "levels": {
+            "cds": "info",
+            "mtx": "debug",
+            "TENANT": "debug",
+            "HDI_CONTAINER_MANAGER": "debug",
+            "HDI_DEPLOYMENT-77e96ca7-ea69-4833-af83-3fbcd427f5d5": "debug",
+            "app-mtx-provisioning": "debug",
+            "app-mtx-bootstrap": "debug"
+        }
     }
   }
 }

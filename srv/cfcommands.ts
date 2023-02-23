@@ -11,7 +11,7 @@ export async function restartApp(appName: any) {
   try {
     // get route id
     const res1 = await core.executeHttpRequest(
-      { destinationName: "app1-cfapi" },
+      { destinationName: "app-mtx-cfapi" },
       {
         method: "GET",
         url: `/v3/apps?names=${appName}`,
@@ -22,7 +22,7 @@ export async function restartApp(appName: any) {
         const appGuid = res1.data.resources[0].guid;
         // delete route
         const res2 = await core.executeHttpRequest(
-          { destinationName: "app1-cfapi" },
+          { destinationName: "app-mtx-cfapi" },
           {
             method: "POST",
             url: `/v3/apps/${appGuid}/actions/restart`,

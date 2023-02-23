@@ -4,13 +4,21 @@
     "routes": [
         {
             "source": "^/catalog/(.*)$",
-            "authenticationType": "xsuaa",
+            "authenticationType": "none",
             "scope": "$XSAPPNAME.Viewer",
             "destination": "srv"
         }
         ,
         {
             "source": "^/monitoring/(.*)$",
+            "authenticationType": "xsuaa",
+            "scope": "$XSAPPNAME.Viewer",
+            "destination": "srv"
+        }
+        ,
+        {
+            "source": "^/srv/(.*)$",
+            "target": "$1",
             "authenticationType": "xsuaa",
             "scope": "$XSAPPNAME.Viewer",
             "destination": "srv"

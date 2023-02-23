@@ -9,7 +9,7 @@
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script>
       function onLoad() {
-        this.document.getElementById("sCode1").value = `using app1.db from '_base/db/data-model.cds';
+        this.document.getElementById("sCode1").value = `using app_mtx.db from '_base/db/data-model.cds';
 
 extend entity db.Sales with {
     Z_helmut1 : String(15);
@@ -17,7 +17,7 @@ extend entity db.Sales with {
 };
 `;
         this.document.getElementById("sFname1").value = "db/Sales.cds";
-        this.document.getElementById("sCode2").value = `namespace Z_app1.db;
+        this.document.getElementById("sCode2").value = `namespace Z_app_mtx.db;
 
 entity Z_Custom {
     key ID          : Integer;
@@ -27,7 +27,7 @@ entity Z_Custom {
         this.document.getElementById("sFname2").value = "db/new.cds";
         this.document.getElementById("sCode3").value = `using CatalogService from '_base/srv/catalog-service'; 
 
-using Z_app1.db as db from '../db/new'; 
+using Z_app_mtx.db as db from '../db/new'; 
 
 extend service CatalogService with {
 

@@ -12,7 +12,7 @@ export class MonitoringService extends cds.ApplicationService {
 
   async init() {
     // this.Sales = this.entities.Sales;
-    this.Memorys = this.entities['app1.db.monitoring.Memorys'];
+    this.Memorys = this.entities['app_mtx.db.monitoring.Memorys'];
     this.Memorys = this.Memorys || this.entities['Memorys'];
 
     this.before("CREATE", this.Memorys, this.beforeCreateMemorys);

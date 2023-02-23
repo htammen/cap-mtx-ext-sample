@@ -1,6 +1,6 @@
 {
     "dependencies": {
-        "@sap/approuter": "^11"
+        "@sap/approuter": "^13"
     },
     "scripts": {
         "custom": "node --inspect custom.js",

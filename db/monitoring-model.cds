@@ -1,6 +1,6 @@
 using {cuid, managed} from '@sap/cds/common';
 
-context app1.db.monitoring {
+context app_mtx.db.monitoring {
 
   entity Memorys: cuid, managed {
         rss: Integer;

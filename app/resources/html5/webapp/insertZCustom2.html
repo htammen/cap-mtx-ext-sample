@@ -1,0 +1,36 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta http-equiv="Content-Type" content="text/html;charset=UTF-8" />
+    <title>Deactivate several Extensions</title>
+
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script>
+      function onLoad() {
+      }
+      
+      function sendRequest(evt) {
+              axios({ url: "/catalog/insertZCustom2()",
+                      method: 'get',
+                    })
+                .then(response => {
+                  alert('Finished')
+                })
+                .catch( error => {
+                  alert(error.message);
+                })
+      }
+    </script>
+</head>
+
+<body onload='onLoad()'>
+    <h2>Click the button below to insert data into table Z_Custom2.</h2>
+    <p style="color:red">Start</p>
+    <form>
+        <button type="button" onClick='return sendRequest()'>Senden</button>
+    </form>
+</body>
+
+</html>

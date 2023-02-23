@@ -1,5 +1,5 @@
 
-context app1.db {
+context app_mtx.db {
 
 entity Sales {
   key ID          : Integer;

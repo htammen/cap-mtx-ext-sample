@@ -10,9 +10,12 @@ import { Monitoring } from "./src/monitoring";
 // import * as error_helper from "./error_helper";
 require("./error_helper");
 
+
 export class CatalogService extends cds.ApplicationService {
   private Sales: any;
   private monitoring: Monitoring = new Monitoring();
+
+  private logger = cds.log('nxe')
 
   async init() {
     this.Sales = this.entities.Sales;
@@ -23,6 +26,8 @@ export class CatalogService extends cds.ApplicationService {
     this.on("activateExtension", this.onActivateExtension);
     this.on("deactivateExtension", this.onDeactivateExtension);
     this.on("resetTenant", this.onResetTenant);
+    this.on("readTenantMetadata", this.onReadTenantCSN);
+    this.on("insertZCustom2", this.onSelectZCustom2);
     this.on("upgradeBaseModel", this.onUpgradeBaseModel);
     this.on("upgradeBaseModelAPI", this.onUpgradeBaseModelAPI);
     this.on("restartApp", this.onRestartApp);
@@ -35,6 +40,7 @@ export class CatalogService extends cds.ApplicationService {
 
 
   afterReadSales(each: any) {
+    this.logger.error('afterReadSales was called')
     if (each.amount > 500) {
       each.criticality = 3;
       if (each.comments === null) each.comments = "";
@@ -67,7 +73,7 @@ export class CatalogService extends cds.ApplicationService {
     try {
       const tx = cds.tx(req);
       // @ts-ignore('later')
-      const results = await tx.run(`CALL "APP1_DB_SP_TopSales"(?,?)`, [
+      const results = await tx.run(`CALL "app_mtx_DB_SP_TopSales"(?,?)`, [
         req.data.amount,
       ]);
       return results;
@@ -111,7 +117,7 @@ export class CatalogService extends cds.ApplicationService {
 
   async onActivateExtension(req: Request) {
     const startTime = new Date().getTime();
-    await this.monitoring.addMemoryInfo("onActivateExtensionBefore", process.memoryUsage(), 0);
+    // await this.monitoring.addMemoryInfo("onActivateExtensionBefore", process.memoryUsage(), 0);
     log.info("Calling activateExtension action");
     const results: { tenant: string | undefined; extension: string } = {} as any;
 
@@ -122,9 +128,13 @@ export class CatalogService extends cds.ApplicationService {
       extensions.push([oSnippet.sFilename, oSnippet.sCode]);
     }
     try {
+      //@ts-ignore: 
       const modelService = await cds.connect.to("ModelService");
-      // @ts-ignore('later')
+      //@ts-ignore: 
       await modelService.activate(req.user.tenant, extensions);
+
+      //@ts-ignore: 
+      cds.mtx.activate(req.user.tenant, extensions)
       // the following emit worked in Günther's app so that a restart war not necessary
       // but it doesn't work here
       // @ts-ignore('later')
@@ -142,13 +152,13 @@ export class CatalogService extends cds.ApplicationService {
     log.info("Finished activateExtension action");
     const endTime = new Date().getTime();
     const diff = (endTime - startTime) / 1000.0;
-    await this.monitoring.addMemoryInfo("onActivateExtensionAfter", process.memoryUsage(), diff);
+    // await this.monitoring.addMemoryInfo("onActivateExtensionAfter", process.memoryUsage(), diff);
     return results;
   }
 
   async onDeactivateExtension(req: any) {
     const startTime = new Date().getTime();
-    await this.monitoring.addMemoryInfo("onDeactivateExtensionBefore", process.memoryUsage(), 0);
+    // await this.monitoring.addMemoryInfo("onDeactivateExtensionBefore", process.memoryUsage(), 0);
     log.info("Calling deactivateExtension action");
     try {
       const { files } = req.data;
@@ -170,7 +180,7 @@ export class CatalogService extends cds.ApplicationService {
     log.info("Finished deactivateExtension action");
     const endTime = new Date().getTime();
     const diff = (endTime - startTime) / 1000.0;
-    await this.monitoring.addMemoryInfo("onDeactivateExtensionAfter", process.memoryUsage(), diff);
+    // await this.monitoring.addMemoryInfo("onDeactivateExtensionAfter", process.memoryUsage(), diff);
     return "deactivateExtension executed successfully";
   }
 
@@ -230,8 +240,102 @@ export class CatalogService extends cds.ApplicationService {
 
   async onRestartApp(req: Request) {
     log.info("Calling restartApp action");
-    await cfcommands.restartApp("app1-srv");
+    await cfcommands.restartApp("app-mtx-srv");
     log.info("Finished restartApp action");
+  }
+
+  async onReadTenantCSN(req: Request) {
+    log.info("Calling onReadTenantCSN action");
+
+    const mdSrv = cds.services.MetadataService;
+    const {csn: csnEntity} = mdSrv.entities  
+    // const tx = mdSrv.tx(req)
+    try {
+
+      // @ts-ignore: 
+      const qry = SELECT.from(csnEntity).where({tenantId: req.tenant})
+      //@ts-ignore: 
+      // const csnPromise = tx.run(qry)
+      // @ts-ignore: 
+      // const csnPromise = tx.get('MetadataService.csn').where({tenantId: req.tenant})
+      const csn = await mdSrv.run(qry) 
+      console.log(csn)
+      const oCsn = JSON.parse(csn)
+ 
+      console.log('finished')
+      //@ts-ignore:
+    } catch (err: any) {
+      log.error(`error reading Tenant metadata CSN `, err);
+      return "error while reading Tenant metadata CSN. See logs for details";
+    }
+    // log.info("Finished readTenantMetadata action");
+    return "onReadTenantCSN executed successfully";
+  }
+
+  async onSelectZCustom2(req: Request) {
+    log.info("Calling onSelectZCustom2 action");
+
+    try {
+      // const mdSrv = cds.services.MetadataService;
+      // @ts-ignore: 
+      // const qry = SELECT.from `services` .where `tenantId = ${req.tenant}`
+      //@ts-ignore: 
+      // const services = mdSrv.run(`Select * from services`, {tenantId: req.tenant})
+      // const services = await mdSrv.read('services', {tenantId: req.tenant});
+      // const services = await mdSrv.run(qry, {tenantId: req.tenant});
+
+      const records = await this.selectZCUSTOM2(req)
+      console.log(records);
+      console.log('onSelectZCustom2 finished')
+      //@ts-ignore:
+    } catch (err: any) {
+      log.error(`error reading Tenant metadata `, err);
+      return "error while reading Tenant metadata. See logs for details";
+    }
+    // log.info("Finished readTenantMetadata action");
+    return "onSelectZCustom2 executed successfully";
+  }
+
+  private async selectZCUSTOM2(req: Request) {
+      const data = [
+        {ID: 1, Text: 'a'},
+        {ID: 2, Text: 'b'},
+        {ID: 3, Text: 'c'}
+      ]
+
+      //@ts-ignore: 
+      const csn = await cds.mtx.getCsn(req.tenant);
+      //@ts-ignore: 
+      const model = (cds as any).compile.for.nodejs(csn);
+      const entity = model.definitions['ext.HT01.Z_Custom2']
+
+      // const csn = cds.mtx.getCsn()
+      //@ts-ignore: 
+      // const promiseSrv = cds.connect.to('ext.HT01.ZCatalogService')
+      const promiseSrv = cds.connect.to('ext.HT01.ZCatalogService', {kind: 'app-service'})
+      const zcustom2Srv = await promiseSrv
+      //@ts-ignore:
+      // const qry = INSERT.into(`EXT_HT01_Z_CUSTOM2`, data)
+      // const qry = SELECT.from(`EXT_HT01_Z_CUSTOM2`)
+      const qry = SELECT.from(entity)
+      // @ts-ignore: 
+      const records = await cds.db.run(qry);
+      // const records = await zcustom2Srv.run(qry);
+      // const tx = zcustom2Srv.tx(req)
+      // tx.run(qry)
+      
+      return records
+  }
+  private insertIntoZCUSTOM(req: Request) {
+      const data = [
+        {ID: 1, Description: 'eins'},
+        {ID: 2, Description: 'zwei'},
+        {ID: 3, Description: 'drei'}
+      ]
+      //@ts-ignore:
+      const qry = INSERT.into(`z_app_mtx.db.Z_CUSTOM`, data)
+      const tx = cds.tx(req)
+      tx.run(qry)
   }
 
   onClearMetadataCache(req: Request) {

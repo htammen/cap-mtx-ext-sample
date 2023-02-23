@@ -1,5 +1,5 @@
-using {app1.db as db} from '../db/data-model';
-using {app1.db.monitoring as dbm} from '../db/monitoring-model';
+using {app_mtx.db as db} from '../db/data-model';
+using {app_mtx.db.monitoring as dbm} from '../db/monitoring-model';
 
 using {CV_SALES, CV_SESSION_INFO} from '../db/data-model';
 
@@ -13,9 +13,11 @@ service CatalogService @(path : '/catalog')
     action upgradeBaseModel() returns String;
     action upgradeBaseModelAPI(tenantid: String) returns String;
     action resetTenant() returns String;
+    function readTenantMetadata() returns String;
     function clearMetadataCache() returns String;
     action dummy() returns String;
     function restartApp(appName: String(60)) returns String;
+    function insertZCustom2() returns String;
 
     entity Sales
       @(restrict: [{ grant: ['READ'],

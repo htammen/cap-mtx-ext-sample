@@ -11,6 +11,7 @@
       function onLoad() {
       }
       
+                                <!-- url: '/catalog/resetTenant', -->
       function sendRequest(evt) {
               axios({ url: '/catalog/Sales',
                       method: 'get',
@@ -21,8 +22,8 @@
                 })
                 .then(token => {
                         return axios({
-                                url: '/catalog/resetTenant',
-                                method: 'post',
+                                url: '/mtx/mtx/v1/metadata/csn/16a09a59-e398-4bc1-b1e7-987c1be99a7a',
+                                method: 'get',
                                 headers: {
                                         "Content-Type": "application/json",
                                         "x-csrf-token": token 

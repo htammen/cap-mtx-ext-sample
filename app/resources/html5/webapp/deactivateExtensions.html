@@ -29,6 +29,7 @@ db/new.cds
                         return axios({
                                 url: '/catalog/deactivateExtension',
                                 method: 'post',
+                                timeout: 60000,
                                 headers: {
                                         "Content-Type": "application/json",
                                         "x-csrf-token": token 
