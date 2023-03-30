@@ -27,7 +27,7 @@ export class CatalogService extends cds.ApplicationService {
     this.on("deactivateExtension", this.onDeactivateExtension);
     this.on("resetTenant", this.onResetTenant);
     this.on("readTenantMetadata", this.onReadTenantCSN);
-    this.on("insertZCustom2", this.onSelectZCustom2);
+    this.on("insertZCustom", this.onSelectZCustom2);
     this.on("upgradeBaseModel", this.onUpgradeBaseModel);
     this.on("upgradeBaseModelAPI", this.onUpgradeBaseModelAPI);
     this.on("restartApp", this.onRestartApp);
@@ -284,7 +284,7 @@ export class CatalogService extends cds.ApplicationService {
       // const services = await mdSrv.read('services', {tenantId: req.tenant});
       // const services = await mdSrv.run(qry, {tenantId: req.tenant});
 
-      const records = await this.selectZCUSTOM2(req)
+      const records = await this.selectZCUSTOM(req)
       console.log(records);
       console.log('onSelectZCustom2 finished')
       //@ts-ignore:
@@ -296,24 +296,24 @@ export class CatalogService extends cds.ApplicationService {
     return "onSelectZCustom2 executed successfully";
   }
 
-  private async selectZCUSTOM2(req: Request) {
+  private async selectZCUSTOM(req: Request) {
       const data = [
-        {ID: 1, Text: 'a'},
-        {ID: 2, Text: 'b'},
-        {ID: 3, Text: 'c'}
+        {ID: 1, Text: 'eins'},
+        {ID: 2, Text: 'zwei'},
+        {ID: 3, Text: 'drei'}
       ]
 
       //@ts-ignore: 
       const csn = await cds.mtx.getCsn(req.tenant);
       //@ts-ignore: 
       const model = (cds as any).compile.for.nodejs(csn);
-      const entity = model.definitions['ext.HT01.Z_Custom2']
+      const entity = model.definitions['Z_app_mtx.db.Z_Custom']
 
       // const csn = cds.mtx.getCsn()
       //@ts-ignore: 
       // const promiseSrv = cds.connect.to('ext.HT01.ZCatalogService')
-      const promiseSrv = cds.connect.to('ext.HT01.ZCatalogService', {kind: 'app-service'})
-      const zcustom2Srv = await promiseSrv
+      const promiseSrv = cds.connect.to('ZCatalogService', {kind: 'app-service'})
+      const zcustomSrv = await promiseSrv
       //@ts-ignore:
       // const qry = INSERT.into(`EXT_HT01_Z_CUSTOM2`, data)
       // const qry = SELECT.from(`EXT_HT01_Z_CUSTOM2`)

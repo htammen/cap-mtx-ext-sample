@@ -34,7 +34,7 @@
     "app/resources/fiori"
   ],
   "scripts": {
-    "debug": "tsc && run(){ CDS_ENV=hybrid node --inspect ./node_modules/@sap/cds/bin/cds.js run; }; run",
+    "debug": "DEBUG=mtx CDS_ENV=hybrid NODE_OPTIONS=--inspect cds-ts run",
     "start": "run(){ node ./node_modules/@sap/cds/bin/cds.js run; }; run",
     "start_with_server": "CDS_ENV=hybrid cds-ts run",
     "start_local_ui": "echo 'Starting UI locally' && cd ./app && node custom.js",

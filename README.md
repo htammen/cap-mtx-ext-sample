@@ -2,7 +2,7 @@
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 **Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
 
-- [app1 - Basic CAP App (multitenancy)](#app1---basic-cap-app-multitenancy)
+- [app-mtx - Basic CAP App (old multitenancy)](#app-mtx---basic-cap-app-old-multitenancy)
   - [Just run the app](#just-run-the-app)
   - [Project structure](#project-structure)
   - [Build and Deploy the app](#build-and-deploy-the-app)
@@ -35,7 +35,7 @@
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
-# app1 - Basic CAP App (multitenancy)
+# app-mtx - Basic CAP App (old multitenancy)
 > Simple multitenancy Business Application
 
 This project demonstrates the possibilities of CAP Extensibility in a multitenant environment (mtx).  
@@ -49,8 +49,9 @@ So they need to be installed as global packages.
 
 ## Just run the app
 
-The current version of the app is available at [BTP](https://hx2lrw77df7sk40dc2-dev-app1.cfapps.eu20.hana.ondemand.com/).  
-Just login with any user of the global SAP IdP. *If it's not running I (Helmut) haven't started the HANA database of my free tier account that day. 
+The current version of the app is available at [BTP](https://cons5-app-mtx-subscription-e303dxck-dev-mtx-app-mtx.cfapps.eu20.hana.ondemand.com).  
+Just login with any user of the global SAP IdP. *If it's not running I (Helmut) hasn't started the HANA database of my free tier account that day or he has not assigned
+the role collections to your user.  
 In that case <a href="mailto:helmut.tammen.ext@nexontis.com">contact</a> me or run it in your BTP account like described below.
 
 ## Project structure
@@ -80,10 +81,10 @@ Before the app can be used you have to configure it.
 #### Configuring destination
 
 The srv app uses the cloud foundry api for creating the tenant routes, when restarting the app and ...  
-The access to this api is implemented via the destination service **app1-dest**.  
+The access to this api is implemented via the destination service **app-mtx-dest**.  
 
-To configure this destination goto the subaccount and space where your app is deployed. Under **instances** find the instance **app1-dest**. 
-Click on the destination to get to the dashboard. Under **destinations** click on **app1-cfapi**. Edit this destination.
+To configure this destination goto the subaccount and space where your app is deployed. Under **instances** find the instance **app-mtx-dest**. 
+Click on the destination to get to the dashboard. Under **destinations** click on **app-mtx-cfapi**. Edit this destination.
 
 - Enter a user (e-mail) and password who has the privilege to run cf commands (probably your user).
 - _Necessary Hack_
@@ -97,7 +98,7 @@ Click on the destination to get to the dashboard. Under **destinations** click o
 
 #### Running on BTP
 
-To run the app on BTP you just have to create a subaccount and create a subscription for the app **Basic CAP app (multitenancy) - app1**.
+To run the app on BTP you just have to create a subaccount and create a subscription for the app **Basic CAP app (multitenancy) - app-mtx**.
 
 The tenant route for your subaccount tenant should have been created automatically during the subscription process. If it is not available please
 create it in your provider subaccount manually.
@@ -109,22 +110,21 @@ To be able to extend the service and db layers you additionally need the roles *
 
 These roles are exposed via the role collections 
 
-- app1_Viewer
-- app1_Administrator
-- app1_Extension_Developer
-- app1_Extension_Developer_Delete
+- app-mtx_Viewer
+- app-mtx_Administrator
+- app-mtx_Extension_Developer
+- app-mtx_Extension_Developer_Delete
 
 Hence assign these role collections to your user or any user who should work with the application.
 
 ##### Debug on BTP
 
-- `cf enable-ssh app1-srv` (only needed once)
-- `cf ssh app1-srv`
-- `ps aux`
-- find pid for **node /home/vcap/app/node_modules/.bin/cds run**
+- `cf enable-ssh app-mtx-srv` (only needed once)
+- `cf ssh app-mtx-srv`
+- `ps auxind pid for **node /home/vcap/app/node_modules/.bin/cds run**
 - `kill -usr1 <pid>` (starts nodejs in debugging mode)
 - `exit` (exit ssh)
-- `cf ssh -N -L 9229:127.0.0.1:9229 app1-srv`
+- `cf ssh -N -L 9229:127.0.0.1:9229 app-mtx-srv`
 - open chrome browser
 - `chrome://inspect`
 - Click **Open dedicated DevTools for Node**
@@ -148,12 +148,12 @@ Additionally you have to do the following tasks
 ###### Load app environment for srv app
 
 - `cd <project root folder>
-- `cf de app1-srv` (the `DefaultEnv` cf plugin must be installed)
+- `cf de app-mtx-srv` (the `DefaultEnv` cf plugin must be installed)
 
 ###### Load app environment for ui app
 
 - `cd <project root folder>/app` (cd's into the ui module)
-- `cf de app1`
+- `cf de app-mtx`
 
 ###### Adjust app environment for ui app
 
@@ -161,7 +161,7 @@ To be able to work with a tenant environment you have to edit the downloaded env
 
 - Open `default-env.json` in an editor
 - At the end add the following lines (overwrite the existing `destinations` entry.
-    - "TENANT_HOST": "<your subaccount subdomain>-dev-app1.cfapps.<your region>.hana.ondemand.com",
+    - "TENANT_HOST": "<your subaccount subdomain>-dev-app-mtx.cfapps.<your region>.hana.ondemand.com",
     - "EXTERNAL_REVERSE_PROXY": true,
     - "destinations": "[ {\n  \"forwardAuthToken\" : true,\n  \"name\" : \"srv\",\n  \"timeout\" : 60000,\n  \"url\" : \"http://localhost:4004\"\n} ]"
 - Replace <your subaccount subdomain> with the subdomain of the tenant-subaccount you want to work with.
@@ -268,12 +268,12 @@ the app can't be extended.
       "namespace-blocklist": [
         "com.sap.",
         "sap.",
-        "app1."
+        "app-mtx."
       ],
       "extension-allowlist": [
         {
           "for": [
-            "app1.db.Sales"
+            "app-mtx.db.Sales"
           ]
         },
         {
@@ -321,7 +321,7 @@ When using mtx with CAP two HDI containers are created for each tenant.
 - a container with name === subaccount-id
 - a container with name === TENANT-subaccount-id-META
 
-The first container holds the CAP entities, the later contains some metadata and the CAP sources, the compiled versions and, in case of extension, the extension sources.
+The first container holds the CAP entities, the latter one contains some metadata and the CAP sources, the compiled versions and, in case of extension, the extension sources.
 The CAP stuff is saved in the table `TENANT_FILES`. The content looks like follows.
 
 ![TENANT_FILES](./docu/TENANT_FILES.png)
@@ -343,7 +343,7 @@ The upgrade base model functionality updates all table rows of TYPE = 'base' wit
 
 Problem:
 
-After you altered the service layer (app1-srv) and deployed your changes to CF you don't see the changes in your existing tenants.
+After you altered the service layer (app-mtx-srv) and deployed your changes to CF you don't see the changes in your existing tenants.
 
 Solution:
 
@@ -358,4 +358,4 @@ After you have redeployed your application to the server you get this error mess
 
 Solution:
 
-Run `cf de app1-srv` to download the neweset VCAP environment from the server.
+Run `cf de app-mtx-srv` to download the neweset VCAP environment from the server.
