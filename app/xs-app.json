@@ -10,6 +10,13 @@
         }
         ,
         {
+            "source": "^/ext/(.*)$",
+            "authenticationType": "none",
+            "scope": "$XSAPPNAME.Viewer",
+            "destination": "srv"
+        }
+        ,
+        {
             "source": "^/monitoring/(.*)$",
             "authenticationType": "xsuaa",
             "scope": "$XSAPPNAME.Viewer",

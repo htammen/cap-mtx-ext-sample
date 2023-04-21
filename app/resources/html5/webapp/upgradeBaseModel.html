@@ -12,6 +12,7 @@
       }
       
       function sendRequest(evt) {
+              this.document.getElementById("result").innerHTML = "Ok, I'll upgrade your tenant now. Be a bit patient. You'll get noticed here as soon as I've finished."
               axios({ url: '/catalog/Sales',
                       method: 'get',
                       headers: {'X-CSRF-TOKEN': 'Fetch'}
@@ -33,10 +34,10 @@
                               })
                 })
                 .then(response => {
-                  alert('Finished')
+                  this.document.getElementById("result").innerHTML = "Success. Your tenant has been successfully upgraded"
                 })
                 .catch( error => {
-                  alert(error.message);
+                  this.document.getElementById("result").innerHTML = JSON.stringify(error.response, null, 2);
                 })
       }
     </script>
@@ -47,6 +48,7 @@
     <form>
         <button type="button" onClick='return sendRequest()'>Senden</button>
     </form>
+    <div><pre id="result"></pre></div>
 </body>
 
 </html>

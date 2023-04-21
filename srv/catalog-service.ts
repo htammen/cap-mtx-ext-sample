@@ -32,6 +32,7 @@ export class CatalogService extends cds.ApplicationService {
     this.on("upgradeBaseModelAPI", this.onUpgradeBaseModelAPI);
     this.on("restartApp", this.onRestartApp);
     this.on("clearMetadataCache", this.onClearMetadataCache);
+    this.on("validateCDSSnippet", this.onValidateCDSSnippet);
     // this.on("getMonitoringData", this.onGetMonitoringData);
     this.on("dummy", this.onDummy);
     
@@ -353,6 +354,31 @@ export class CatalogService extends cds.ApplicationService {
         break;
     }
     return result;
+  }
+
+  async onValidateCDSSnippet(req: Request) {
+    const baseCodeStr = atob(req.data.basecode) 
+    const snippetStr = atob(req.data.snippet) 
+    // const csn = cds.parse(baseCodeStr)
+    if(!(cds as any)?.ace?.content) {
+      const mdSrv = cds.services.MetadataService;
+      const {csn: csnEntity} = mdSrv.entities  
+
+      const qry = SELECT.from(csnEntity).where({tenantId: req.tenant})
+      const csnContent = await mdSrv.run(qry); 
+      (cds as any).ace = {"csnContent": csnContent}
+    }
+    try {
+      // @ts-ignore
+      const csn = cds.compile({"baseCsn.csn": cds.ace.csnContent, "baseCode.cds": baseCodeStr, "snippet.cds": snippetStr})
+    } catch (err) {
+      (err as any).messages.filter(e => e.severity === 'Error').forEach(e => {
+        req.error(500, JSON.stringify(e));
+      })
+    }
+    if(!(req as any).errors) {
+      return `ok, there are no errors`
+    }
   }
 
   onDummy(req: Request) {

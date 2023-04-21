@@ -5,12 +5,15 @@
   "license": "UNLICENSED",
   "description": "Simple multitenancy Business Application",
   "engines": {
-    "node": "16.x"
+    "node": ">=16.x"
+  },
+  "volta": {
+    "node": "18.16.0"
   },
   "dependencies": {
     "@sap-cloud-sdk/core": "^1.53",
     "@sap/audit-logging": "^5",
-    "@sap/cds": "^6",
+    "@sap/cds": "^6.7.1",
     "@sap/cds-mtx": "^2",
     "@sap/xsenv": "^3",
     "@sap/xssec": "^3",
@@ -23,8 +26,8 @@
     "passport": "^0.4.1"
   },
   "devDependencies": {
-    "@sap/ux-specification": "^1.96.4",
-    "@tsconfig/node18": "^1.0.1",
+    "@sap/ux-specification": "^1.108.3",
+    "@tsconfig/node18": "^1.0.3",
     "@types/cfenv": "^1.2.2",
     "@types/sap__xsenv": "^3",
     "prettier": "^2",
@@ -35,6 +38,7 @@
   ],
   "scripts": {
     "debug": "DEBUG=mtx CDS_ENV=hybrid NODE_OPTIONS=--inspect cds-ts run",
+    "debug:watch": "DEBUG=mtx CDS_ENV=hybrid NODE_OPTIONS=--inspect cds-ts watch",
     "start": "run(){ node ./node_modules/@sap/cds/bin/cds.js run; }; run",
     "start_with_server": "CDS_ENV=hybrid cds-ts run",
     "start_local_ui": "echo 'Starting UI locally' && cd ./app && node custom.js",
@@ -168,8 +172,33 @@
         "model": true
       },
       "element-prefix": [
-        "Z",
-        "ZZ"
+        "z",
+        "A",
+        "B",
+        "C",
+        "D",
+        "E",
+        "F",
+        "G",
+        "H",
+        "I",
+        "J",
+        "K",
+        "L",
+        "M",
+        "N",
+        "O",
+        "P",
+        "Q",
+        "R",
+        "S",
+        "T",
+        "U",
+        "V",
+        "W",
+        "X",
+        "Y",
+        "Z"
       ],
       "namespace-blocklist": [
         "com.sap.",
@@ -178,28 +207,26 @@
       ],
       "extension-allowlist": [
         {
-          "for": [
-            "app_mtx"
-          ]
+          "for": []
         },
         {
           "for": [
-            "CatalogService"
+            "z.Ext"
           ],
           "kind": "service"
         }
       ]
     },
     "log": {
-        "levels": {
-            "cds": "info",
-            "mtx": "debug",
-            "TENANT": "debug",
-            "HDI_CONTAINER_MANAGER": "debug",
-            "HDI_DEPLOYMENT-77e96ca7-ea69-4833-af83-3fbcd427f5d5": "debug",
-            "app-mtx-provisioning": "debug",
-            "app-mtx-bootstrap": "debug"
-        }
+      "levels": {
+        "cds": "info",
+        "mtx": "debug",
+        "TENANT": "debug",
+        "HDI_CONTAINER_MANAGER": "debug",
+        "HDI_DEPLOYMENT-77e96ca7-ea69-4833-af83-3fbcd427f5d5": "debug",
+        "app-mtx-provisioning": "debug",
+        "app-mtx-bootstrap": "debug"
+      }
     }
   }
 }

@@ -1,0 +1,148 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta http-equiv="Content-Type" content="text/html;charset=UTF-8" />
+    <title>Dynamic Validation of CDS snippets</title>
+
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script>
+      function onLoad() {
+        this.document.getElementById("sCodeSnippet").value = 
+`
+using {app_mtx.db as db} from '../db/data-model';
+
+namespace z.FB;
+extend service z.Ext with {
+  entity FB_NationName as projection on FB.Nations {ID, name} where country.descr = 'Deutschland';
+  entity FB_TeamsFromGermany as Select from FB.Teams where city.nation.country.code = 'DE';
+  entity FB_TeamsMembers as Select from FB.Teams {name, name || ': ' || memberCount as nameplusmembers: String};
+  entity FB_TeamsSeatRelation as Select from FB.Teams {name, 1000 * city.stadion.capacity / city.inhabitants as seatPer1000};
+  // use static entity
+  entity FB_SalesAmount as Select from db.Sales {region, amount};
+} 
+`;
+
+        this.document.getElementById("sCodeBase").value = 
+`using {
+  managed,
+  cuid,
+  sap.common.CodeList as CodeList,
+  sap.common.Countries as Countries,
+  Country
+} from '@sap/cds/common';
+
+namespace z.FB;
+
+entity Cities : cuid, managed, CodeList {
+  zipcode : String(15);
+  inhabitants: Integer;
+  stadion : Association to one Stadions;
+  nation  : Association to one Nations;
+}
+
+entity Nations : cuid, managed {
+  name    : String(60);
+  country : Association to Countries;
+  leagues : Composition of many Leagues;
+  cities  : Composition of many Cities;
+}
+
+entity Leagues : cuid, managed {
+  name      : String(30) @title       : 'League name';
+  order     : Int16      @title       : 'Order of the league';
+  nation    : Association to Nations;
+  teamcount : Int16      @assert.range: [
+    0,
+    30
+  ];
+}
+
+entity Teams : cuid, managed {
+  name        : String(120);
+  city        : Association to Cities;
+  memberCount : Integer;
+}
+
+entity Stadions : cuid, managed {
+  name     : String(250);
+  capacity : Integer;
+  city     : Association to one Cities;
+}
+
+extend service z.Ext with {
+  @odata.draft.enabled
+  entity FB_Cities as projection on FB.Cities;
+}
+`;
+      };
+      
+      function sendRequest(evt) {
+              this.document.getElementById("result").value = "Ok, we'll evaluate your request"
+              var sSnippet = this.document.getElementById("sCodeSnippet").value;
+              var sBaseCode = this.document.getElementById("sCodeBase").value;
+              axios({ url: '/catalog/Sales',
+                      method: 'get',
+                      headers: {'X-CSRF-TOKEN': 'Fetch'}
+                    })
+                .then(res => {
+                        return res.headers['x-csrf-token']
+                })
+                .then(token => {
+                  //const strUrl = `/catalog/validateCDSSnippet(snippet='hello',basecode='world')`
+                  const strUrl = `/catalog/validateCDSSnippet(snippet='${btoa(sSnippet)}',basecode='${btoa(sBaseCode)}')`
+                  //const strUrl = `/catalog/validateCDSSnippet()`
+                        return axios({
+                                url: strUrl,
+                                method: 'get',
+                                headers: {
+                                        "Content-Type": "application/json",
+                                        "x-csrf-token": token 
+                                      },
+                                data: {
+                                        snippet: sSnippet,
+                                        basecode: sBaseCode
+                                      }
+                              })
+                })
+               .then(response => {
+                  this.document.getElementById("result").value = JSON.stringify(response.data, null, 2);
+                })
+                .catch( error => {
+                  if(error.response.data.error.details) {
+                    const errMessages = error.response.data.error.details.reduce((acc, e) => {
+                      acc.counter++
+                      return {str: acc.str.concat(`Error ${acc.counter}\n`).concat(e.message).concat('\n'), counter: acc.counter}
+                    }, {str: '', counter: 0})
+                    this.document.getElementById("result").value = errMessages.str;
+                  } else {
+                    this.document.getElementById("result").value = error.response.data.error.message;
+                  }
+                })
+      };
+
+      function validateSnippet() {
+        sendRequest();
+      }
+    </script>
+</head>
+
+<body onload='onLoad()'>
+    <h2>Enter the code you want to validate</h2>
+    <h3>Code</h3>
+    <form>
+        Code snippet that gets validated:<br>
+        <br/>
+        <textarea id="sCodeSnippet" cols="150" rows="13" name="codeSnippet"></textarea>
+        <br/>
+        Base code for validation:<br>
+        <br/>
+        <textarea id="sCodeBase" cols="150" rows="45" name="codeBase"></textarea>
+        <br/>
+        <button type="button" onClick='return validateSnippet()'>Validate Snippet</button>
+    </form>
+    <div><textarea id="result" cols="150" rows="8"></textArea></div>
+</body>
+
+</html>

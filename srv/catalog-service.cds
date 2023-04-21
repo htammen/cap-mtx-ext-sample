@@ -18,6 +18,7 @@ service CatalogService @(path : '/catalog')
     action dummy() returns String;
     function restartApp(appName: String(60)) returns String;
     function insertZCustom2() returns String;
+    function validateCDSSnippet(snippet: String, basecode: String) returns String;
 
     entity Sales
       @(restrict: [{ grant: ['READ'],
@@ -27,7 +28,7 @@ service CatalogService @(path : '/catalog')
                      to: 'Admin' 
                    }
                   ])
-      as select * from db.Sales
+      as select * from db.Sales where amount > 0
       actions {
         @(restrict: [{ to: 'Admin' }])
         action boost();
