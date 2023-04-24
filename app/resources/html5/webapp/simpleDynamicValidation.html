@@ -7,6 +7,7 @@
     <title>Dynamic Validation of CDS snippets</title>
 
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/ramda/0.25.0/ramda.min.js"></script>
     <script>
       function onLoad() {
         this.document.getElementById("sCodeSnippet").value = 
@@ -39,6 +40,7 @@ entity Cities : cuid, managed, CodeList {
   zipcode : String(15);
   inhabitants: Integer;
   stadion : Association to one Stadions;
+  stadion.capacity / inhabitants * 1000 as seatPer100Inhabitants; 
   nation  : Association to one Nations;
 }
 
@@ -113,14 +115,31 @@ extend service z.Ext with {
                   if(error.response.data.error.details) {
                     const errMessages = error.response.data.error.details.reduce((acc, e) => {
                       acc.counter++
-                      return {str: acc.str.concat(`Error ${acc.counter}\n`).concat(e.message).concat('\n'), counter: acc.counter}
+                      const errObj = JSON.parse(e.message);
+                      const errString = createErrStr(errObj, {snippet: sSnippet, baseCode: sBaseCode})
+                      //return {str: acc.str.concat(`Error ${acc.counter}\n`).concat(e.message).concat('\n'), counter: acc.counter}
+                      const dashCount = 60
+                      const strHead = R.repeat('-', dashCount).concat(' ').concat(new String(acc.counter)).concat(' ').concat(R.repeat('-', dashCount)).join('');
+                      return {str: acc.str.concat(`${strHead}\n`).concat(errString).concat('\n'), counter: acc.counter}
                     }, {str: '', counter: 0})
                     this.document.getElementById("result").value = errMessages.str;
                   } else {
-                    this.document.getElementById("result").value = error.response.data.error.message;
+                    // this.document.getElementById("result").value = error.response.data.error.message;
+                    const errObj = JSON.parse(error.response.data.error.message);
+                    const errString = createErrStr(errObj, {snippet: sSnippet, baseCode: sBaseCode})
+                    this.document.getElementById("result").value = errString;
                   }
                 })
       };
+
+      function createErrStr(errObj, oCode) {
+        const errSource = R.splitWhen(c => c === '.', errObj.$location.file)[0].join('')
+        const codeSource = oCode[errSource]
+        const errLine = codeSource.split('\n')[errObj.$location.line-1]
+        const errHeaderLine1 = R.repeat(' ', errObj.$location.endCol-2).concat(errObj.message).join('')
+        const errHeaderLine2 = R.repeat(' ', errObj.$location.col-1).concat('|').concat(R.repeat(' ', R.max(errObj.$location.endCol-1 - errObj.$location.col-1, 0))).concat('|').join('');
+        return `${errHeaderLine1}\n${errHeaderLine2}\n${errLine}` 
+      }
 
       function validateSnippet() {
         sendRequest();
@@ -138,11 +157,11 @@ extend service z.Ext with {
         <br/>
         Base code for validation:<br>
         <br/>
-        <textarea id="sCodeBase" cols="150" rows="45" name="codeBase"></textarea>
+        <textarea id="sCodeBase" cols="150" rows="40" name="codeBase"></textarea>
         <br/>
         <button type="button" onClick='return validateSnippet()'>Validate Snippet</button>
     </form>
-    <div><textarea id="result" cols="150" rows="8"></textArea></div>
+    <div><textarea id="result" cols="150" rows="12"></textArea></div>
 </body>
 
 </html>
