@@ -18,6 +18,7 @@ namespace z.FB;
 extend service z.Ext with {
   entity FB_NationName as projection on FB.Nations {ID, name} where country.descr = 'Deutschland';
   entity FB_TeamsFromGermany as Select from FB.Teams where city.nation.country.code = 'DE';
+  // use calculated field with value expression
   entity FB_TeamsMembers as Select from FB.Teams {name, name || ': ' || memberCount as nameplusmembers: String};
   entity FB_TeamsSeatRelation as Select from FB.Teams {name, 1000 * city.stadion.capacity / city.inhabitants as seatPer1000};
   // use static entity
@@ -26,7 +27,8 @@ extend service z.Ext with {
 `;
 
         this.document.getElementById("sCodeBase").value = 
-`using {
+`
+using {
   managed,
   cuid,
   sap.common.CodeList as CodeList,
@@ -40,7 +42,8 @@ entity Cities : cuid, managed, CodeList {
   zipcode : String(15);
   inhabitants: Integer;
   stadion : Association to one Stadions;
-  stadion.capacity / inhabitants * 1000 as seatPer100Inhabitants; 
+  // here we define a calculated element with value expression
+  seatPer100Inhabitants: Double = stadion.capacity / inhabitants * 1000; 
   nation  : Association to one Nations;
 }
 
