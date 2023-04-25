@@ -27,3 +27,4 @@ _out
 srv/src/monitoring.js
 srv/monitoring-service.js
 .cdsrc-private.json
+.mtxcache.json

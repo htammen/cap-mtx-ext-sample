@@ -37,7 +37,7 @@
     "app/resources/fiori"
   ],
   "scripts": {
-    "debug": "DEBUG=mtx CDS_ENV=hybrid NODE_OPTIONS=--inspect cds-ts run",
+    "debug": "PORT=4008 DEBUG=mtx CDS_ENV=hybrid NODE_OPTIONS=--inspect cds-ts run",
     "debug:watch": "DEBUG=mtx CDS_ENV=hybrid NODE_OPTIONS=--inspect cds-ts watch",
     "start": "run(){ node ./node_modules/@sap/cds/bin/cds.js run; }; run",
     "start_with_server": "CDS_ENV=hybrid cds-ts run",
