@@ -9,7 +9,8 @@
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script>
       function onLoad() {
-        this.document.getElementById("sCode1").value = `using app1.db from '_base/db/data-model.cds';
+        this.document.getElementById("sCode1").value = `//tag: mytag
+using app1.db from '_base/db/data-model.cds';
 
 extend entity db.Sales with {
     Z_helmut1 : String(15);

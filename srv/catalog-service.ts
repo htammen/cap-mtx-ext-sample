@@ -5,6 +5,7 @@ import log from "cf-nodejs-logging-support";
 import * as cfcommands from "./cfcommands";
 import * as mtxapis from "./mtxapis";
 import { Monitoring } from "./src/monitoring";
+import modelservice from "./modelservice";
 
 // @ts-ignore('later')
 // import * as error_helper from "./error_helper";
@@ -26,6 +27,8 @@ export class CatalogService extends cds.ApplicationService {
     this.on("upgradeBaseModel", this.onUpgradeBaseModel);
     this.on("upgradeBaseModelAPI", this.onUpgradeBaseModelAPI);
     this.on("restartApp", this.onRestartApp);
+    this.on("getCsn", this.onGetCSN);
+    this.on("getEdmx", this.onGetEDMX);
     this.on("clearMetadataCache", this.onClearMetadataCache);
     // this.on("getMonitoringData", this.onGetMonitoringData);
     this.on("dummy", this.onDummy);
@@ -120,27 +123,38 @@ export class CatalogService extends cds.ApplicationService {
     for (const oSnippet of aSnippets) {
       extensions.push([oSnippet.sFilename, oSnippet.sCode]);
     }
-    try {
-      const extensionService = cds.services["cds.xt.ExtensibilityService"];
-      req.tenant = req.user.tenant 
-      // const sExtensions = aSnippets.reduce((sStr:string, oSnippet: {sFilename: string, sCode: string}) => {
-      //   sStr += oSnippet.sCode
-      //   return sStr
-      // }, "")
-      
-      // Take the first snippet and add it to the tenant
-      const sExtensions = aSnippets[0].sCode
-      // @ts-ignore('later')
-      await extensionService.add(sExtensions, null, 'database', req.user.tenant );
-      // the following emit worked in Günther's app so that a restart war not necessary
-      // but it doesn't work here
-      // @ts-ignore('later')
-      // await global.cds.emit("served");
-      // metadata problem fixed with @sap/cds:5.9.8. see https://answers.sap.com/questions/13662134/clear-odata-metadata-cache.html
-      // req._.odataReq._service._getMetadataCache()._cachedMetadata.clear()
-    } catch (err: any) {
-      log.error(`couldn't activate extension for ${req.user.tenant}.`, err);
-      throw new Error(`error while activating extensions.\n${JSON.stringify(err.toJSON(), null, 2)}`);
+    const firstLine = aSnippets[0].sCode.split('\n')[0]
+    if(firstLine.match(/tag/)) {
+      const tag = firstLine.split(':')[1].trim()
+      try {
+        const extensionService = cds.services["cds.xt.ExtensibilityService"];
+        // const sExtensions = aSnippets.reduce((sStr:string, oSnippet: {sFilename: string, sCode: string}) => {
+        //   sStr += oSnippet.sCode
+        //   return sStr
+        // }, "")
+        
+        // Take the first snippet and add it to the tenant
+        let sExtensions = aSnippets[0].sCode
+        let aExt = [sExtensions]
+        if(sExtensions.split('\n').length === 1) aExt = [];
+        // @ts-ignore('later')
+        // await extensionService.add(sExtensions, tag, 'database', req.user.tenant );
+        await extensionService.set(aExt, null, tag, 'database', req.user.tenant );
+        await (extensionService as any).promote(tag, 'database', req.user.tenant);
+        // the following emit worked in Günther's app so that a restart war not necessary
+        // but it doesn't work here
+        // @ts-ignore('later')
+        // await global.cds.emit("served");
+        // metadata problem fixed with @sap/cds:5.9.8. see https://answers.sap.com/questions/13662134/clear-odata-metadata-cache.html
+        // req._.odataReq._service._getMetadataCache()._cachedMetadata.clear()
+      } catch (err: any) {
+        log.error(`couldn't activate extension for ${req.user.tenant}.`, err);
+        throw new Error(`error while activating extensions.\n${JSON.stringify(err.toJSON(), null, 2)}`);
+      }
+    } else {
+      const errStr = `tag for activation must be defined in first line like this "//tag: myTag"`
+      log.error(errStr);
+      throw new Error(errStr);
     }
 
     results.tenant = req.user.tenant;
@@ -239,6 +253,24 @@ export class CatalogService extends cds.ApplicationService {
     log.info("Calling restartApp action");
     await cfcommands.restartApp("app1-srv");
     log.info("Finished restartApp action");
+  }
+
+  async onGetCSN(req: Request) {
+    log.info("Calling onGetCSN action");
+    const modelService = await cds.connect.to("cds.xt.ModelProviderService");
+    //@ts-ignore late
+    const csn = await modelService.getExtCsn(req.user.tenant, [], 'nodejs')
+    log.info("Finished onGetCSN action");
+    return JSON.stringify(csn, null, 2);
+  }
+
+  async onGetEDMX(req: Request) {
+    log.info("Calling onGetEDMX action");
+    const modelService = await cds.connect.to("cds.xt.ModelProviderService");
+    //@ts-ignore late
+    const edmx = await modelService.getEdmx(req.user.tenant, [], 'CatalogService', null, 'de', 'v4', 'nodejs')
+    log.info("Finished onGetEDMX action");
+    return `EDMX: \n '${edmx}'`;
   }
 
   onClearMetadataCache(req: Request) {

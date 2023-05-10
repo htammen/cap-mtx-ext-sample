@@ -5,7 +5,7 @@
   "license": "UNLICENSED",
   "description": "Simple multitenancy Business Application",
   "engines": {
-    "node": "16.x"
+    "node": "18.x"
   },
   "dependencies": {
     "@sap-cloud-sdk/core": "^1.53",

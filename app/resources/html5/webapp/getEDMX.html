@@ -1,0 +1,50 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta http-equiv="Content-Type" content="text/html;charset=UTF-8" />
+    <title>Test EDMX for current tenant</title>
+
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script>
+      function onLoad() {
+      }
+      
+      function sendRequest(evt) {
+              this.document.getElementById("result").innerHTML = "Be a little bit patient. The data has been sent to the server.\nAs soon as the server has finished you will see the results here";
+              axios({ url: '/catalog/Sales',
+                      method: 'get',
+                      headers: {'X-CSRF-TOKEN': 'Fetch'}
+                    })
+                .then(res => {
+                        return res.headers['x-csrf-token']
+                })
+                .then(token => {
+                        return axios({
+                                url: '/catalog/getEdmx()',
+                                method: 'get',
+                                headers: {
+                                        "x-csrf-token": token 
+                                      }
+                              })
+                })
+                .then(response => {
+                  this.document.getElementById("result").innerHTML = response.data.value;
+                })
+                .catch( error => {
+                  alert(error.message);
+                })
+      }
+    </script>
+</head>
+
+<body onload='onLoad()'>
+    <h2>Click the button below to get EDMX of the current tenant.</h2>
+    <form>
+        <button type="button" onClick='return sendRequest()'>Senden</button>
+    </form>
+    <div><pre id="result"></pre></div>
+</body>
+
+</html>

@@ -12,6 +12,8 @@ service CatalogService @(path : '/catalog')
     action deactivateExtension(files: many String(60)) returns String;
     action upgradeBaseModel() returns String;
     action upgradeBaseModelAPI(tenantid: String) returns String;
+    function getCsn() returns String;
+    function getEdmx() returns String;
     action resetTenant() returns String;
     function clearMetadataCache() returns String;
     action dummy() returns String;
